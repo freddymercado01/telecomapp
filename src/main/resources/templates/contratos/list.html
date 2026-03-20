@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Contratos</title></head>
+<body>
+<h2>Contratos</h2>
+<a th:href="@{/dashboard}">Volver</a> | <a th:href="@{/contratos/nuevo}">Nuevo contrato</a>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>ID</th><th>Cliente</th><th>Plan</th><th>Vendedor</th><th>Inicio</th><th>Estado</th><th>Acciones</th>
+  </tr>
+  <tr th:each="c : ${contratos}">
+    <td th:text="${c.idContrato}"></td>
+    <td th:text="${c.cliente.nombre}"></td>
+    <td th:text="${c.plan.nombre}"></td>
+    <td th:text="${c.vendedor.nombre}"></td>
+    <td th:text="${c.fechaInicio}"></td>
+    <td th:text="${c.estado}"></td>
+    <td>
+      <a th:href="@{'/contratos/' + ${c.idContrato} + '/editar'}">Editar</a>
+      <form th:action="@{'/contratos/' + ${c.idContrato} + '/eliminar'}" method="post" style="display:inline;">
+        <button type="submit">Eliminar</button>
+      </form>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
