@@ -1,62 +1,96 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><title>Contrato</title></head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrato | TelecomApp</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
 <body>
-<h2 th:text="${contrato.idContrato} == null ? 'Nuevo Contrato' : 'Editar Contrato'"></h2>
-<a th:href="@{/contratos}">Volver</a>
+<main class="page">
+    <header class="topbar">
+        <div class="brand">
+            <h1 th:text="${contrato.idContrato} == null ? 'Nuevo Contrato' : 'Editar Contrato'"></h1>
+            <p>Alta y mantenimiento de contratos de servicio</p>
+        </div>
+        <a class="btn btn-link" th:href="@{/contratos}">Volver</a>
+    </header>
 
-<form th:action="@{/contratos}" method="post" th:object="${contrato}">
-    <input type="hidden" th:field="*{idContrato}"/>
+    <section class="card" style="max-width: 900px;">
+        <form th:action="@{/contratos}" method="post" th:object="${contrato}">
+            <input type="hidden" th:field="*{idContrato}"/>
 
-    <label>Cliente:</label>
-    <select name="clienteId" required>
-        <option th:each="cl : ${clientes}" th:value="${cl.idCliente}" th:text="${cl.nombre}"
-                th:selected="${contrato.cliente != null and contrato.cliente.idCliente == cl.idCliente}"></option>
-    </select><br><br>
+            <h3 style="margin-top:0;">Datos comerciales</h3>
 
-    <label>Plan:</label>
-    <select name="planId" required>
-        <option th:each="p : ${planes}" th:value="${p.idPlan}" th:text="${p.nombre}"
-                th:selected="${contrato.plan != null and contrato.plan.idPlan == p.idPlan}"></option>
-    </select><br><br>
+            <label>Cliente</label>
+            <select name="clienteId" required>
+                <option value="" disabled th:selected="${contrato.cliente == null}">Seleccione un cliente</option>
+                <option th:each="cl : ${clientes}"
+                        th:value="${cl.idCliente}"
+                        th:text="${cl.nombre}"
+                        th:selected="${contrato.cliente != null and contrato.cliente.idCliente == cl.idCliente}">
+                </option>
+            </select>
 
-    <label>Vendedor:</label>
-    <select name="vendedorId" required>
-        <option th:each="v : ${vendedores}" th:value="${v.idVendedor}" th:text="${v.nombre}"
-                th:selected="${contrato.vendedor != null and contrato.vendedor.idVendedor == v.idVendedor}"></option>
-    </select><br><br>
+            <label>Plan</label>
+            <select name="planId" required>
+                <option value="" disabled th:selected="${contrato.plan == null}">Seleccione un plan</option>
+                <option th:each="p : ${planes}"
+                        th:value="${p.idPlan}"
+                        th:text="${p.nombre}"
+                        th:selected="${contrato.plan != null and contrato.plan.idPlan == p.idPlan}">
+                </option>
+            </select>
 
-    <label>Fecha inicio:</label>
-    <input type="date" th:field="*{fechaInicio}" required/><br><br>
+            <label>Vendedor</label>
+            <select name="vendedorId" required>
+                <option value="" disabled th:selected="${contrato.vendedor == null}">Seleccione un vendedor</option>
+                <option th:each="v : ${vendedores}"
+                        th:value="${v.idVendedor}"
+                        th:text="${v.nombre}"
+                        th:selected="${contrato.vendedor != null and contrato.vendedor.idVendedor == v.idVendedor}">
+                </option>
+            </select>
 
-    <label>Fecha fin:</label>
-    <input type="date" th:field="*{fechaFin}"/><br><br>
+            <label>Fecha inicio</label>
+            <input type="date" th:field="*{fechaInicio}" required/>
 
-    <label>Estado:</label>
-    <select th:field="*{estado}">
-        <option th:each="e : ${estados}" th:value="${e}" th:text="${e}"></option>
-    </select><br><br>
+            <label>Fecha fin</label>
+            <input type="date" th:field="*{fechaFin}"/>
 
-    <h3>Infraestructura</h3>
-    <label>Dirección instalación:</label>
-    <input th:field="*{infraestructura.direccionInstalacion}"/><br><br>
+            <label>Estado</label>
+            <select th:field="*{estado}">
+                <option th:each="e : ${estados}" th:value="${e}" th:text="${e}"></option>
+            </select>
 
-    <label>Nodo:</label>
-    <input th:field="*{infraestructura.nodo}"/><br><br>
+            <hr style="margin: 20px 0; border:0; border-top:1px solid #d9e2ec;">
 
-    <label>Equipo CPE:</label>
-    <input th:field="*{infraestructura.equipoCPE}"/><br><br>
+            <h3 style="margin-top:0;">Infraestructura de instalación</h3>
 
-    <label>Serial ONT:</label>
-    <input th:field="*{infraestructura.serialONT}"/><br><br>
+            <label>Dirección de instalación</label>
+            <input th:field="*{infraestructura.direccionInstalacion}"/>
 
-    <label>IP WAN:</label>
-    <input th:field="*{infraestructura.ipWan}"/><br><br>
+            <label>Nodo</label>
+            <input th:field="*{infraestructura.nodo}"/>
 
-    <label>Observaciones:</label><br>
-    <textarea th:field="*{infraestructura.observaciones}" rows="3" cols="40"></textarea><br><br>
+            <label>Equipo CPE</label>
+            <input th:field="*{infraestructura.equipoCPE}"/>
 
-    <button type="submit">Guardar</button>
-</form>
+            <label>Serial ONT</label>
+            <input th:field="*{infraestructura.serialONT}"/>
+
+            <label>IP WAN</label>
+            <input th:field="*{infraestructura.ipWan}"/>
+
+            <label>Observaciones</label>
+            <textarea th:field="*{infraestructura.observaciones}" rows="4"></textarea>
+
+            <div class="actions" style="margin-top: 16px;">
+                <button class="btn-primary" type="submit">Guardar</button>
+                <a class="btn btn-link" th:href="@{/contratos}">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</main>
 </body>
 </html>

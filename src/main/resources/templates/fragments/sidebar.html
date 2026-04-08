@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside class="sidebar" th:fragment="appSidebar(currentMenu)">
+    <h2>TelecomApp</h2>
+    <p>Panel operativo</p>
+    <nav class="side-nav">
+        <a th:href="@{/dashboard}" th:classappend="${currentMenu == 'dashboard'} ? 'active' : ''">Dashboard</a>
+        <a th:href="@{/clientes}" th:classappend="${currentMenu == 'clientes'} ? 'active' : ''">Clientes</a>
+        <a th:href="@{/planes}" th:classappend="${currentMenu == 'planes'} ? 'active' : ''">Planes</a>
+        <a th:href="@{/contratos}" th:classappend="${currentMenu == 'contratos'} ? 'active' : ''">Contratos</a>
+        <a th:href="@{/facturas}" th:classappend="${currentMenu == 'facturas'} ? 'active' : ''">Facturas</a>
+        <a th:href="@{/logout}">Salir</a>
+    </nav>
+</aside>
+</body>
+</html>

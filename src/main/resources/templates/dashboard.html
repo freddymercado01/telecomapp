@@ -1,14 +1,77 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><title>Dashboard</title></head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TelecomApp | Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
 <body>
-<h2>Dashboard</h2>
-<ul>
-  <li><a th:href="@{/clientes}">Clientes</a></li>
-  <li><a th:href="@{/planes}">Planes</a></li>
-  <li><a th:href="@{/contratos}">Contratos</a></li>
-  <li><a th:href="@{/facturas}">Facturas</a></li>
-  <li><a th:href="@{/logout}">Salir</a></li>
-</ul>
+<div class="layout">
+    <aside class="sidebar">
+        <h2>TelecomApp</h2>
+        <p>Panel operativo</p>
+        <nav class="side-nav">
+            <a class="active" th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/clientes}">Clientes</a>
+            <a th:href="@{/planes}">Planes</a>
+            <a th:href="@{/contratos}">Contratos</a>
+            <a th:href="@{/facturas}">Facturas</a>
+            <a th:href="@{/logout}">Salir</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="page" style="padding-top:0;">
+            <header class="topbar">
+                <div class="brand">
+                    <h1>Dashboard Operativo</h1>
+                    <p>Simulador de gestión para empresa de telecomunicaciones</p>
+                </div>
+            </header>
+
+            <section class="grid grid-4">
+                <article class="kpi">
+                    <div class="title">Módulo</div>
+                    <div class="value">Clientes</div>
+                </article>
+                <article class="kpi">
+                    <div class="title">Módulo</div>
+                    <div class="value">Planes</div>
+                </article>
+                <article class="kpi">
+                    <div class="title">Módulo</div>
+                    <div class="value">Contratos</div>
+                </article>
+                <article class="kpi">
+                    <div class="title">Módulo</div>
+                    <div class="value">Facturación</div>
+                </article>
+            </section>
+
+            <section class="quick-links">
+                <a class="quick-link" th:href="@{/clientes}">
+                    <h3>Clientes</h3>
+                    <p>Consulta y administración de clientes del servicio.</p>
+                </a>
+
+                <a class="quick-link" th:href="@{/planes}">
+                    <h3>Planes</h3>
+                    <p>Catálogo de planes, precios y estado comercial.</p>
+                </a>
+
+                <a class="quick-link" th:href="@{/contratos}">
+                    <h3>Contratos</h3>
+                    <p>Alta de contratos y datos de instalación.</p>
+                </a>
+
+                <a class="quick-link" th:href="@{/facturas}">
+                    <h3>Facturas</h3>
+                    <p>Generación y seguimiento del estado de facturación.</p>
+                </a>
+            </section>
+        </section>
+    </main>
+</div>
 </body>
 </html>

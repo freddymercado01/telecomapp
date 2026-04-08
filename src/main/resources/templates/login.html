@@ -1,12 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><title>Login</title></head>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TelecomApp | Ingreso</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
 <body>
-<h2>Telecom - Login</h2>
-<form th:action="@{/login}" method="post">
-    <label>Usuario:</label><input name="username"><br>
-    <label>Clave:</label><input type="password" name="password"><br>
-    <button type="submit">Ingresar</button>
-</form>
+<main class="login-wrap">
+    <section class="card login-card">
+        <div class="brand">
+            <h1>TelecomApp</h1>
+            <p>Panel de operación comercial y técnica</p>
+        </div>
+
+        <form th:action="@{/login}" method="post" style="margin-top: 12px;">
+            <label for="username">Usuario</label>
+            <input id="username" name="username" type="text" autocomplete="username" required>
+
+            <label for="password">Clave</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+            <div class="actions" style="margin-top: 16px;">
+                <button class="btn-primary" type="submit">Ingresar</button>
+            </div>
+        </form>
+
+        <p class="notice" th:if="${param.error}">Usuario o clave incorrectos.</p>
+        <p style="margin-top: 12px; color: #0f766e;" th:if="${param.logout}">Sesión cerrada correctamente.</p>
+    </section>
+</main>
 </body>
 </html>

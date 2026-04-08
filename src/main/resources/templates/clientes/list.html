@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planes | TelecomApp</title>
+    <title>Clientes | TelecomApp</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
@@ -13,8 +13,8 @@
         <p>Panel operativo</p>
         <nav class="side-nav">
             <a th:href="@{/dashboard}">Dashboard</a>
-            <a th:href="@{/clientes}">Clientes</a>
-            <a class="active" th:href="@{/planes}">Planes</a>
+            <a class="active" th:href="@{/clientes}">Clientes</a>
+            <a th:href="@{/planes}">Planes</a>
             <a th:href="@{/contratos}">Contratos</a>
             <a th:href="@{/facturas}">Facturas</a>
             <a th:href="@{/logout}">Salir</a>
@@ -25,11 +25,11 @@
         <section class="page" style="padding-top:0;">
             <header class="topbar">
                 <div class="brand">
-                    <h1>Planes</h1>
-                    <p>Gestión del catálogo comercial de servicios</p>
+                    <h1>Clientes</h1>
+                    <p>Gestión de clientes residenciales y corporativos</p>
                 </div>
                 <div class="actions">
-                    <a class="btn btn-primary" th:href="@{/planes/nuevo}">Nuevo plan</a>
+                    <a class="btn btn-primary" th:href="@{/clientes/nuevo}">Nuevo cliente</a>
                 </div>
             </header>
 
@@ -39,31 +39,24 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Tipo servicio</th>
-                        <th>Precio mensual</th>
-                        <th>Activo</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(planes)}">
-                        <td colspan="6" style="text-align:center; color:#5a6b7b;">No hay planes registrados aún.</td>
+                    <tr th:if="${#lists.isEmpty(clientes)}">
+                        <td colspan="5" style="text-align:center; color:#5a6b7b;">No hay clientes registrados aún.</td>
                     </tr>
-                    <tr th:each="p : ${planes}">
-                        <td th:text="${p.idPlan}"></td>
-                        <td th:text="${p.nombre}"></td>
-                        <td th:text="${p.tipoServicio}"></td>
-                        <td th:text="${#numbers.formatDecimal(p.precioMensual, 1, 'POINT', 2, 'COMMA')}"></td>
-                        <td th:text="${p.activo ? 'Sí' : 'No'}"></td>
+                    <tr th:each="c : ${clientes}">
+                        <td th:text="${c.idCliente}"></td>
+                        <td th:text="${c.nombre}"></td>
+                        <td th:text="${c.direccion}"></td>
+                        <td th:text="${c.telefono}"></td>
                         <td>
                             <div class="actions">
-                                <a class="btn btn-link" th:href="@{'/planes/' + ${p.idPlan} + '/editar'}">Editar</a>
-
-                                <form th:action="@{'/planes/' + ${p.idPlan} + '/toggle'}" method="post" style="display:inline;">
-                                    <button type="submit" th:text="${p.activo} ? 'Desactivar' : 'Activar'"></button>
-                                </form>
-
-                                <form th:action="@{'/planes/' + ${p.idPlan} + '/eliminar'}" method="post" style="display:inline;">
+                                <a class="btn btn-link" th:href="@{'/clientes/' + ${c.idCliente} + '/editar'}">Editar</a>
+                                <form th:action="@{'/clientes/' + ${c.idCliente} + '/eliminar'}" method="post" style="display:inline;">
                                     <button type="submit">Eliminar</button>
                                 </form>
                             </div>
