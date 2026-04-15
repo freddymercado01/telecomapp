@@ -1,7 +1,7 @@
 package com.telecom.telecom_app.controller;
 
 import com.telecom.telecom_app.model.Contrato;
-import com.telecom.telecom_app.repository.ContratoRepository;
+import com.telecom.telecom_app.service.ContratoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,18 +17,17 @@ import java.util.List;
 @Tag(name = "Contratos API", description = "API REST para gestionar contratos de clientes")
 public class ContratoRestController {
 
-    private final ContratoRepository contratoRepository;
+    private final ContratoService contratoService;
 
-    public ContratoRestController(ContratoRepository contratoRepository) {
-        this.contratoRepository = contratoRepository;
+    public ContratoRestController(ContratoService contratoService) {
+        this.contratoService = contratoService;
     }
 
     @GetMapping
     @Operation(summary = "Listar todos los contratos", description = "Obtiene la lista completa de todos los contratos registrados")
     @ApiResponse(responseCode = "200", description = "Lista de contratos obtenida exitosamente")
     public ResponseEntity<List<Contrato>> listarTodos() {
-        List<Contrato> contratos = contratoRepository.findAll();
-        return ResponseEntity.ok(contratos);
+        return ResponseEntity.ok(contratoService.listarTodos());
     }
 
     @GetMapping("/{id}")
@@ -39,16 +38,18 @@ public class ContratoRestController {
     })
     public ResponseEntity<Contrato> obtenerPorId(
             @PathVariable @Parameter(description = "ID del contrato a buscar") Long id) {
-        return contratoRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(contratoService.obtenerPorId(id));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     @Operation(summary = "Crear nuevo contrato", description = "Crea un nuevo contrato en la base de datos")
     @ApiResponse(responseCode = "201", description = "Contrato creado exitosamente")
     public ResponseEntity<Contrato> crear(@RequestBody Contrato contrato) {
-        Contrato contratoGuardado = contratoRepository.save(contrato);
+        Contrato contratoGuardado = contratoService.crear(contrato);
         return ResponseEntity.status(201).body(contratoGuardado);
     }
 
@@ -61,17 +62,11 @@ public class ContratoRestController {
     public ResponseEntity<Contrato> actualizar(
             @PathVariable @Parameter(description = "ID del contrato a actualizar") Long id,
             @RequestBody Contrato contratoActualizado) {
-        return contratoRepository.findById(id)
-                .map(contrato -> {
-                    contrato.setFechaInicio(contratoActualizado.getFechaInicio());
-                    contrato.setFechaFin(contratoActualizado.getFechaFin());
-                    contrato.setEstado(contratoActualizado.getEstado());
-                    contrato.setCliente(contratoActualizado.getCliente());
-                    contrato.setPlan(contratoActualizado.getPlan());
-                    contrato.setVendedor(contratoActualizado.getVendedor());
-                    return ResponseEntity.ok(contratoRepository.save(contrato));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(contratoService.actualizar(id, contratoActualizado));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -82,10 +77,11 @@ public class ContratoRestController {
     })
     public ResponseEntity<Void> eliminar(
             @PathVariable @Parameter(description = "ID del contrato a eliminar") Long id) {
-        if (contratoRepository.existsById(id)) {
-            contratoRepository.deleteById(id);
+        try {
+            contratoService.eliminar(id);
             return ResponseEntity.noContent().build();
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
 }

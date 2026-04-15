@@ -1,7 +1,8 @@
 package com.telecom.telecom_app.controller;
 
+import com.telecom.telecom_app.exception.ResourceInUseException;
 import com.telecom.telecom_app.model.Plan;
-import com.telecom.telecom_app.repository.PlanRepository;
+import com.telecom.telecom_app.service.PlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,18 +18,17 @@ import java.util.List;
 @Tag(name = "Planes API", description = "API REST para gestionar planes de telecomunicaciones")
 public class PlanRestController {
 
-    private final PlanRepository planRepository;
+    private final PlanService planService;
 
-    public PlanRestController(PlanRepository planRepository) {
-        this.planRepository = planRepository;
+    public PlanRestController(PlanService planService) {
+        this.planService = planService;
     }
 
     @GetMapping
     @Operation(summary = "Listar todos los planes", description = "Obtiene la lista completa de todos los planes de telecomunicaciones")
     @ApiResponse(responseCode = "200", description = "Lista de planes obtenida exitosamente")
     public ResponseEntity<List<Plan>> listarTodos() {
-        List<Plan> planes = planRepository.findAll();
-        return ResponseEntity.ok(planes);
+        return ResponseEntity.ok(planService.listarTodos());
     }
 
     @GetMapping("/{id}")
@@ -39,16 +39,18 @@ public class PlanRestController {
     })
     public ResponseEntity<Plan> obtenerPorId(
             @PathVariable @Parameter(description = "ID del plan a buscar") Long id) {
-        return planRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(planService.obtenerPorId(id));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     @Operation(summary = "Crear nuevo plan", description = "Crea un nuevo plan de telecomunicaciones en la base de datos")
     @ApiResponse(responseCode = "201", description = "Plan creado exitosamente")
     public ResponseEntity<Plan> crear(@RequestBody Plan plan) {
-        Plan planGuardado = planRepository.save(plan);
+        Plan planGuardado = planService.guardar(plan);
         return ResponseEntity.status(201).body(planGuardado);
     }
 
@@ -61,16 +63,11 @@ public class PlanRestController {
     public ResponseEntity<Plan> actualizar(
             @PathVariable @Parameter(description = "ID del plan a actualizar") Long id,
             @RequestBody Plan planActualizado) {
-        return planRepository.findById(id)
-                .map(plan -> {
-                    plan.setNombre(planActualizado.getNombre());
-                    plan.setTipoServicio(planActualizado.getTipoServicio());
-                    plan.setPrecioMensual(planActualizado.getPrecioMensual());
-                    plan.setDescripcion(planActualizado.getDescripcion());
-                    plan.setActivo(planActualizado.isActivo());
-                    return ResponseEntity.ok(planRepository.save(plan));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(planService.actualizar(id, planActualizado));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -81,10 +78,13 @@ public class PlanRestController {
     })
     public ResponseEntity<Void> eliminar(
             @PathVariable @Parameter(description = "ID del plan a eliminar") Long id) {
-        if (planRepository.existsById(id)) {
-            planRepository.deleteById(id);
+        try {
+            planService.eliminar(id);
             return ResponseEntity.noContent().build();
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (ResourceInUseException ex) {
+            return ResponseEntity.status(409).build();
         }
-        return ResponseEntity.notFound().build();
     }
 }

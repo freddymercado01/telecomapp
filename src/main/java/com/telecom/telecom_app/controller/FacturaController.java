@@ -1,7 +1,8 @@
 package com.telecom.telecom_app.controller;
 
 import com.telecom.telecom_app.model.*;
-import com.telecom.telecom_app.repository.*;
+import com.telecom.telecom_app.service.ContratoService;
+import com.telecom.telecom_app.service.FacturaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,27 +11,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
 @Controller
 @RequestMapping("/facturas")
 @Tag(name = "Facturas", description = "Operaciones CRUD para facturas de telecomunicaciones")
 public class FacturaController {
 
-    private final FacturaRepository facturaRepo;
-    private final ContratoRepository contratoRepo;
+    private final FacturaService facturaService;
+    private final ContratoService contratoService;
 
-    public FacturaController(FacturaRepository facturaRepo, ContratoRepository contratoRepo) {
-        this.facturaRepo = facturaRepo;
-        this.contratoRepo = contratoRepo;
+    public FacturaController(FacturaService facturaService, ContratoService contratoService) {
+        this.facturaService = facturaService;
+        this.contratoService = contratoService;
     }
 
     @Operation(summary = "Listar todas las facturas", description = "Obtiene la lista de todas las facturas")
     @ApiResponse(responseCode = "200", description = "Lista de facturas obtenida exitosamente")
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("facturas", facturaRepo.findAll());
-        model.addAttribute("contratos", contratoRepo.findAll());
+        model.addAttribute("facturas", facturaService.listarTodos());
+        model.addAttribute("contratos", contratoService.listarTodos());
         model.addAttribute("estados", EstadoFactura.values());
         return "facturas/list";
     }
@@ -39,15 +38,7 @@ public class FacturaController {
     @ApiResponse(responseCode = "200", description = "Factura generada exitosamente")
     @PostMapping("/generar")
     public String generar(@RequestParam @Parameter(description = "ID del contrato") Long contratoId) {
-        Contrato contrato = contratoRepo.findById(contratoId).orElseThrow();
-
-        Factura f = new Factura();
-        f.setContrato(contrato);
-        f.setFechaEmision(LocalDate.now());
-        f.setTotal(contrato.getPlan().getPrecioMensual());
-        f.setEstado(EstadoFactura.PENDIENTE);
-
-        facturaRepo.save(f);
+        facturaService.generar(contratoId);
         return "redirect:/facturas";
     }
 
@@ -56,9 +47,7 @@ public class FacturaController {
     @PostMapping("/{id}/estado")
     public String cambiarEstado(@PathVariable @Parameter(description = "ID de la factura") Long id, 
                                 @RequestParam @Parameter(description = "Nuevo estado de la factura") EstadoFactura estado) {
-        Factura f = facturaRepo.findById(id).orElseThrow();
-        f.setEstado(estado);
-        facturaRepo.save(f);
+        facturaService.cambiarEstado(id, estado);
         return "redirect:/facturas";
     }
 
@@ -66,7 +55,7 @@ public class FacturaController {
     @ApiResponse(responseCode = "200", description = "Factura eliminada exitosamente")
     @PostMapping("/{id}/eliminar")
     public String eliminar(@PathVariable @Parameter(description = "ID de la factura") Long id) {
-        facturaRepo.deleteById(id);
+        facturaService.eliminar(id);
         return "redirect:/facturas";
     }
 }

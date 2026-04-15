@@ -1,7 +1,8 @@
 package com.telecom.telecom_app.controller;
 
+import com.telecom.telecom_app.exception.ResourceInUseException;
 import com.telecom.telecom_app.model.Vendedor;
-import com.telecom.telecom_app.repository.VendedorRepository;
+import com.telecom.telecom_app.service.VendedorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,18 +18,17 @@ import java.util.List;
 @Tag(name = "Vendedores API", description = "API REST para gestionar vendedores")
 public class VendedorRestController {
 
-    private final VendedorRepository vendedorRepository;
+    private final VendedorService vendedorService;
 
-    public VendedorRestController(VendedorRepository vendedorRepository) {
-        this.vendedorRepository = vendedorRepository;
+    public VendedorRestController(VendedorService vendedorService) {
+        this.vendedorService = vendedorService;
     }
 
     @GetMapping
     @Operation(summary = "Listar todos los vendedores", description = "Obtiene la lista completa de todos los vendedores registrados")
     @ApiResponse(responseCode = "200", description = "Lista de vendedores obtenida exitosamente")
     public ResponseEntity<List<Vendedor>> listarTodos() {
-        List<Vendedor> vendedores = vendedorRepository.findAll();
-        return ResponseEntity.ok(vendedores);
+        return ResponseEntity.ok(vendedorService.listarTodos());
     }
 
     @GetMapping("/{id}")
@@ -39,16 +39,18 @@ public class VendedorRestController {
     })
     public ResponseEntity<Vendedor> obtenerPorId(
             @PathVariable @Parameter(description = "ID del vendedor a buscar") Long id) {
-        return vendedorRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(vendedorService.obtenerPorId(id));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     @Operation(summary = "Crear nuevo vendedor", description = "Crea un nuevo vendedor en la base de datos")
     @ApiResponse(responseCode = "201", description = "Vendedor creado exitosamente")
     public ResponseEntity<Vendedor> crear(@RequestBody Vendedor vendedor) {
-        Vendedor vendedorGuardado = vendedorRepository.save(vendedor);
+        Vendedor vendedorGuardado = vendedorService.guardar(vendedor);
         return ResponseEntity.status(201).body(vendedorGuardado);
     }
 
@@ -61,15 +63,11 @@ public class VendedorRestController {
     public ResponseEntity<Vendedor> actualizar(
             @PathVariable @Parameter(description = "ID del vendedor a actualizar") Long id,
             @RequestBody Vendedor vendedorActualizado) {
-        return vendedorRepository.findById(id)
-                .map(vendedor -> {
-                    vendedor.setNombre(vendedorActualizado.getNombre());
-                    vendedor.setTelefono(vendedorActualizado.getTelefono());
-                    vendedor.setEmail(vendedorActualizado.getEmail());
-                    vendedor.setUsuario(vendedorActualizado.getUsuario());
-                    return ResponseEntity.ok(vendedorRepository.save(vendedor));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(vendedorService.actualizar(id, vendedorActualizado));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -80,10 +78,13 @@ public class VendedorRestController {
     })
     public ResponseEntity<Void> eliminar(
             @PathVariable @Parameter(description = "ID del vendedor a eliminar") Long id) {
-        if (vendedorRepository.existsById(id)) {
-            vendedorRepository.deleteById(id);
+        try {
+            vendedorService.eliminar(id);
             return ResponseEntity.noContent().build();
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (ResourceInUseException ex) {
+            return ResponseEntity.status(409).build();
         }
-        return ResponseEntity.notFound().build();
     }
 }

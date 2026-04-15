@@ -1,7 +1,10 @@
 package com.telecom.telecom_app.controller;
 
 import com.telecom.telecom_app.model.*;
-import com.telecom.telecom_app.repository.*;
+import com.telecom.telecom_app.service.ClienteService;
+import com.telecom.telecom_app.service.ContratoService;
+import com.telecom.telecom_app.service.PlanService;
+import com.telecom.telecom_app.service.VendedorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,26 +20,26 @@ import java.time.LocalDate;
 @Tag(name = "Contratos", description = "Operaciones CRUD para contratos de telecomunicaciones")
 public class ContratoController {
 
-    private final ContratoRepository contratoRepo;
-    private final ClienteRepository clienteRepo;
-    private final PlanRepository planRepo;
-    private final VendedorRepository vendedorRepo;
+    private final ContratoService contratoService;
+    private final ClienteService clienteService;
+    private final PlanService planService;
+    private final VendedorService vendedorService;
 
-    public ContratoController(ContratoRepository contratoRepo,
-                              ClienteRepository clienteRepo,
-                              PlanRepository planRepo,
-                              VendedorRepository vendedorRepo) {
-        this.contratoRepo = contratoRepo;
-        this.clienteRepo = clienteRepo;
-        this.planRepo = planRepo;
-        this.vendedorRepo = vendedorRepo;
+    public ContratoController(ContratoService contratoService,
+                              ClienteService clienteService,
+                              PlanService planService,
+                              VendedorService vendedorService) {
+        this.contratoService = contratoService;
+        this.clienteService = clienteService;
+        this.planService = planService;
+        this.vendedorService = vendedorService;
     }
 
     @Operation(summary = "Listar todos los contratos", description = "Obtiene la lista de todos los contratos")
     @ApiResponse(responseCode = "200", description = "Lista de contratos obtenida exitosamente")
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("contratos", contratoRepo.findAll());
+        model.addAttribute("contratos", contratoService.listarTodos());
         return "contratos/list";
     }
 
@@ -50,9 +53,9 @@ public class ContratoController {
         contrato.setInfraestructura(new Infraestructura());
 
         model.addAttribute("contrato", contrato);
-        model.addAttribute("clientes", clienteRepo.findAll());
-        model.addAttribute("planes", planRepo.findAll());
-        model.addAttribute("vendedores", vendedorRepo.findAll());
+        model.addAttribute("clientes", clienteService.listarTodos());
+        model.addAttribute("planes", planService.listarTodos());
+        model.addAttribute("vendedores", vendedorService.listarTodos());
         model.addAttribute("estados", EstadoContrato.values());
         return "contratos/form";
     }
@@ -64,21 +67,12 @@ public class ContratoController {
                           @RequestParam @Parameter(description = "ID del cliente") Long clienteId,
                           @RequestParam @Parameter(description = "ID del plan") Long planId,
                           @RequestParam @Parameter(description = "ID del vendedor") Long vendedorId) {
-
-        Cliente cliente = clienteRepo.findById(clienteId).orElseThrow();
-        Plan plan = planRepo.findById(planId).orElseThrow();
-        Vendedor vendedor = vendedorRepo.findById(vendedorId).orElseThrow();
-
-        contrato.setCliente(cliente);
-        contrato.setPlan(plan);
-        contrato.setVendedor(vendedor);
-
         // Si no enviaron infraestructura, crea una vacía
         if (contrato.getInfraestructura() == null) {
             contrato.setInfraestructura(new Infraestructura());
         }
 
-        contratoRepo.save(contrato);
+        contratoService.guardarDesdeFormulario(contrato, clienteId, planId, vendedorId);
         return "redirect:/contratos";
     }
 
@@ -86,13 +80,13 @@ public class ContratoController {
     @ApiResponse(responseCode = "200", description = "Contrato cargado para edición")
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable @Parameter(description = "ID del contrato") Long id, Model model) {
-        Contrato contrato = contratoRepo.findById(id).orElseThrow();
+        Contrato contrato = contratoService.obtenerPorId(id);
         if (contrato.getInfraestructura() == null) contrato.setInfraestructura(new Infraestructura());
 
         model.addAttribute("contrato", contrato);
-        model.addAttribute("clientes", clienteRepo.findAll());
-        model.addAttribute("planes", planRepo.findAll());
-        model.addAttribute("vendedores", vendedorRepo.findAll());
+        model.addAttribute("clientes", clienteService.listarTodos());
+        model.addAttribute("planes", planService.listarTodos());
+        model.addAttribute("vendedores", vendedorService.listarTodos());
         model.addAttribute("estados", EstadoContrato.values());
         return "contratos/form";
     }
@@ -101,7 +95,7 @@ public class ContratoController {
     @ApiResponse(responseCode = "200", description = "Contrato eliminado exitosamente")
     @PostMapping("/{id}/eliminar")
     public String eliminar(@PathVariable @Parameter(description = "ID del contrato") Long id) {
-        contratoRepo.deleteById(id);
+        contratoService.eliminar(id);
         return "redirect:/contratos";
     }
 }

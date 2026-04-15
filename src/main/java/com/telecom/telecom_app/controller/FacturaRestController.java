@@ -1,7 +1,7 @@
 package com.telecom.telecom_app.controller;
 
 import com.telecom.telecom_app.model.Factura;
-import com.telecom.telecom_app.repository.FacturaRepository;
+import com.telecom.telecom_app.service.FacturaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,18 +17,17 @@ import java.util.List;
 @Tag(name = "Facturas API", description = "API REST para gestionar facturas de clientes")
 public class FacturaRestController {
 
-    private final FacturaRepository facturaRepository;
+    private final FacturaService facturaService;
 
-    public FacturaRestController(FacturaRepository facturaRepository) {
-        this.facturaRepository = facturaRepository;
+    public FacturaRestController(FacturaService facturaService) {
+        this.facturaService = facturaService;
     }
 
     @GetMapping
     @Operation(summary = "Listar todas las facturas", description = "Obtiene la lista completa de todas las facturas registradas")
     @ApiResponse(responseCode = "200", description = "Lista de facturas obtenida exitosamente")
     public ResponseEntity<List<Factura>> listarTodos() {
-        List<Factura> facturas = facturaRepository.findAll();
-        return ResponseEntity.ok(facturas);
+        return ResponseEntity.ok(facturaService.listarTodos());
     }
 
     @GetMapping("/{id}")
@@ -39,16 +38,18 @@ public class FacturaRestController {
     })
     public ResponseEntity<Factura> obtenerPorId(
             @PathVariable @Parameter(description = "ID de la factura a buscar") Long id) {
-        return facturaRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(facturaService.obtenerPorId(id));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     @Operation(summary = "Crear nueva factura", description = "Crea una nueva factura en la base de datos")
     @ApiResponse(responseCode = "201", description = "Factura creada exitosamente")
     public ResponseEntity<Factura> crear(@RequestBody Factura factura) {
-        Factura facturaGuardada = facturaRepository.save(factura);
+        Factura facturaGuardada = facturaService.crear(factura);
         return ResponseEntity.status(201).body(facturaGuardada);
     }
 
@@ -61,15 +62,11 @@ public class FacturaRestController {
     public ResponseEntity<Factura> actualizar(
             @PathVariable @Parameter(description = "ID de la factura a actualizar") Long id,
             @RequestBody Factura facturaActualizada) {
-        return facturaRepository.findById(id)
-                .map(factura -> {
-                    factura.setFechaEmision(facturaActualizada.getFechaEmision());
-                    factura.setTotal(facturaActualizada.getTotal());
-                    factura.setEstado(facturaActualizada.getEstado());
-                    factura.setContrato(facturaActualizada.getContrato());
-                    return ResponseEntity.ok(facturaRepository.save(factura));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(facturaService.actualizar(id, facturaActualizada));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -80,10 +77,11 @@ public class FacturaRestController {
     })
     public ResponseEntity<Void> eliminar(
             @PathVariable @Parameter(description = "ID de la factura a eliminar") Long id) {
-        if (facturaRepository.existsById(id)) {
-            facturaRepository.deleteById(id);
+        try {
+            facturaService.eliminar(id);
             return ResponseEntity.noContent().build();
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
 }

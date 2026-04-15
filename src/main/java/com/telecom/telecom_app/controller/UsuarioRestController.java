@@ -1,7 +1,8 @@
 package com.telecom.telecom_app.controller;
 
+import com.telecom.telecom_app.exception.ResourceInUseException;
 import com.telecom.telecom_app.model.Usuario;
-import com.telecom.telecom_app.repository.UsuarioRepository;
+import com.telecom.telecom_app.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,18 +18,17 @@ import java.util.List;
 @Tag(name = "Usuarios API", description = "API REST para gestionar usuarios del sistema")
 public class UsuarioRestController {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
-    public UsuarioRestController(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioRestController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping
     @Operation(summary = "Listar todos los usuarios", description = "Obtiene la lista completa de todos los usuarios del sistema")
     @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente")
     public ResponseEntity<List<Usuario>> listarTodos() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        return ResponseEntity.ok(usuarios);
+        return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
     @GetMapping("/{id}")
@@ -39,16 +39,18 @@ public class UsuarioRestController {
     })
     public ResponseEntity<Usuario> obtenerPorId(
             @PathVariable @Parameter(description = "ID del usuario a buscar") Long id) {
-        return usuarioRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(usuarioService.obtenerPorId(id));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     @Operation(summary = "Crear nuevo usuario", description = "Crea un nuevo usuario en el sistema")
     @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
     public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
-        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        Usuario usuarioGuardado = usuarioService.crear(usuario);
         return ResponseEntity.status(201).body(usuarioGuardado);
     }
 
@@ -61,14 +63,11 @@ public class UsuarioRestController {
     public ResponseEntity<Usuario> actualizar(
             @PathVariable @Parameter(description = "ID del usuario a actualizar") Long id,
             @RequestBody Usuario usuarioActualizado) {
-        return usuarioRepository.findById(id)
-                .map(usuario -> {
-                    usuario.setUsername(usuarioActualizado.getUsername());
-                    usuario.setPasswordHash(usuarioActualizado.getPasswordHash());
-                    usuario.setRol(usuarioActualizado.getRol());
-                    return ResponseEntity.ok(usuarioRepository.save(usuario));
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(usuarioService.actualizar(id, usuarioActualizado));
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -79,10 +78,13 @@ public class UsuarioRestController {
     })
     public ResponseEntity<Void> eliminar(
             @PathVariable @Parameter(description = "ID del usuario a eliminar") Long id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
+        try {
+            usuarioService.eliminar(id);
             return ResponseEntity.noContent().build();
+        } catch (java.util.NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (ResourceInUseException ex) {
+            return ResponseEntity.status(409).build();
         }
-        return ResponseEntity.notFound().build();
     }
 }
