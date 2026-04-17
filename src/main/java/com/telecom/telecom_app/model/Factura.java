@@ -23,6 +23,7 @@ public class Factura {
     public EstadoFactura getEstado() { return estado; }
     public Contrato getContrato() { return contrato; }
 
+    public void setIdFactura(Long idFactura) { this.idFactura = idFactura; }
     public void setFechaEmision(LocalDate fechaEmision) { this.fechaEmision = fechaEmision; }
     public void setTotal(double total) { this.total = total; }
     public void setEstado(EstadoFactura estado) { this.estado = estado; }

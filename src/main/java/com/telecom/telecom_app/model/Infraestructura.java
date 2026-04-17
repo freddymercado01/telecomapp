@@ -24,6 +24,7 @@ public class Infraestructura {
     public String getIpWan() { return ipWan; }
     public String getObservaciones() { return observaciones; }
 
+    public void setId(Long id) { this.id = id; }
     public void setDireccionInstalacion(String direccionInstalacion) { this.direccionInstalacion = direccionInstalacion; }
     public void setNodo(String nodo) { this.nodo = nodo; }
     public void setEquipoCPE(String equipoCPE) { this.equipoCPE = equipoCPE; }

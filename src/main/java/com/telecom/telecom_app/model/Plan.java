@@ -21,6 +21,7 @@ public class Plan {
     public String getDescripcion() { return descripcion; }
     public boolean isActivo() { return activo; }
 
+    public void setIdPlan(Long idPlan) { this.idPlan = idPlan; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setTipoServicio(String tipoServicio) { this.tipoServicio = tipoServicio; }
     public void setPrecioMensual(double precioMensual) { this.precioMensual = precioMensual; }

@@ -30,6 +30,7 @@ public class Usuario {
     public String getPasswordHash() { return passwordHash; }
     public Rol getRol() { return rol; }
 
+    public void setId(Long id) { this.id = id; }
     public void setUsername(String username) { this.username = username; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public void setRol(Rol rol) { this.rol = rol; }
