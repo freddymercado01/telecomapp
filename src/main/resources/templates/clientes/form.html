@@ -7,34 +7,48 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="page">
-    <header class="topbar">
-        <div class="brand">
-            <h1 th:text="${cliente.idCliente} == null ? 'Nuevo Cliente' : 'Editar Cliente'"></h1>
-            <p>Información de contacto y ubicación del cliente</p>
-        </div>
-        <a class="btn btn-link" th:href="@{/clientes}">Volver</a>
-    </header>
+<div class="layout">
+    <aside th:replace="~{fragments/sidebar :: appSidebar('clientes')}"></aside>
 
-    <section class="card" style="max-width: 700px;">
-        <form th:action="@{/clientes}" method="post" th:object="${cliente}">
-            <input type="hidden" th:field="*{idCliente}">
+    <main class="content">
+        <section class="page stack-lg">
+            <header class="page-header">
+                <div class="brand">
+                    <h1 th:text="${cliente.idCliente} == null ? 'Nuevo cliente' : 'Editar cliente'"></h1>
+                    <p>Informacion de contacto y ubicacion del cliente.</p>
+                </div>
+                <a class="btn btn-link" th:href="@{/clientes}">Volver</a>
+            </header>
 
-            <label for="nombre">Nombre</label>
-            <input id="nombre" th:field="*{nombre}" required>
+            <section class="card card-sm">
+                <form th:action="@{/clientes}" method="post" th:object="${cliente}" class="form-stack">
+                    <input type="hidden" th:field="*{idCliente}">
 
-            <label for="direccion">Dirección</label>
-            <input id="direccion" th:field="*{direccion}" required>
+                    <div class="form-grid">
+                        <div>
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" th:field="*{nombre}" required>
+                        </div>
 
-            <label for="telefono">Teléfono</label>
-            <input id="telefono" th:field="*{telefono}" required>
+                        <div>
+                            <label for="telefono">Telefono</label>
+                            <input id="telefono" th:field="*{telefono}" required>
+                        </div>
+                    </div>
 
-            <div class="actions" style="margin-top: 16px;">
-                <button class="btn-primary" type="submit">Guardar</button>
-                <a class="btn btn-link" th:href="@{/clientes}">Cancelar</a>
-            </div>
-        </form>
-    </section>
-</main>
+                    <div>
+                        <label for="direccion">Direccion</label>
+                        <input id="direccion" th:field="*{direccion}" required>
+                    </div>
+
+                    <div class="actions mt-4">
+                        <button class="btn-primary" type="submit">Guardar</button>
+                        <a class="btn btn-link" th:href="@{/clientes}">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+</div>
 </body>
 </html>

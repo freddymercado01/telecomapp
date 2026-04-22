@@ -8,66 +8,55 @@
 </head>
 <body>
 <div class="layout">
-    <aside class="sidebar">
-        <h2>TelecomApp</h2>
-        <p>Panel operativo</p>
-        <nav class="side-nav">
-            <a class="active" th:href="@{/dashboard}">Dashboard</a>
-            <a th:href="@{/clientes}">Clientes</a>
-            <a th:href="@{/planes}">Planes</a>
-            <a th:href="@{/contratos}">Contratos</a>
-            <a th:href="@{/facturas}">Facturas</a>
-            <a th:href="@{/logout}">Salir</a>
-        </nav>
-    </aside>
+    <aside th:replace="~{fragments/sidebar :: appSidebar('dashboard')}"></aside>
 
     <main class="content">
-        <section class="page" style="padding-top:0;">
-            <header class="topbar">
+        <section class="page">
+            <header class="page-header">
                 <div class="brand">
                     <h1>Dashboard Operativo</h1>
-                    <p>Simulador de gestión para empresa de telecomunicaciones</p>
+                    <p>Resumen de modulos y accesos rapidos de gestion telecom.</p>
                 </div>
             </header>
 
             <section class="grid grid-4">
                 <article class="kpi">
-                    <div class="title">Módulo</div>
+                    <div class="title">Modulo</div>
                     <div class="value">Clientes</div>
                 </article>
                 <article class="kpi">
-                    <div class="title">Módulo</div>
+                    <div class="title">Modulo</div>
                     <div class="value">Planes</div>
                 </article>
                 <article class="kpi">
-                    <div class="title">Módulo</div>
+                    <div class="title">Modulo</div>
                     <div class="value">Contratos</div>
                 </article>
                 <article class="kpi">
-                    <div class="title">Módulo</div>
-                    <div class="value">Facturación</div>
+                    <div class="title">Modulo</div>
+                    <div class="value">Facturacion</div>
                 </article>
             </section>
 
             <section class="quick-links">
                 <a class="quick-link" th:href="@{/clientes}">
                     <h3>Clientes</h3>
-                    <p>Consulta y administración de clientes del servicio.</p>
+                    <p>Consulta y administracion de clientes residenciales y corporativos.</p>
                 </a>
 
                 <a class="quick-link" th:href="@{/planes}">
                     <h3>Planes</h3>
-                    <p>Catálogo de planes, precios y estado comercial.</p>
+                    <p>Catalogo de planes, precios y estado comercial.</p>
                 </a>
 
                 <a class="quick-link" th:href="@{/contratos}">
                     <h3>Contratos</h3>
-                    <p>Alta de contratos y datos de instalación.</p>
+                    <p>Alta de contratos y gestion del estado operativo.</p>
                 </a>
 
                 <a class="quick-link" th:href="@{/facturas}">
                     <h3>Facturas</h3>
-                    <p>Generación y seguimiento del estado de facturación.</p>
+                    <p>Generacion y seguimiento del estado de facturacion.</p>
                 </a>
             </section>
         </section>
