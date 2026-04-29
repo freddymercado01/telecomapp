@@ -8,45 +8,34 @@
 </head>
 <body>
 <div class="layout">
-    <aside class="sidebar">
-        <h2>TelecomApp</h2>
-        <p>Panel operativo</p>
-        <nav class="side-nav">
-            <a th:href="@{/dashboard}">Dashboard</a>
-            <a class="active" th:href="@{/clientes}">Clientes</a>
-            <a th:href="@{/planes}">Planes</a>
-            <a th:href="@{/contratos}">Contratos</a>
-            <a th:href="@{/facturas}">Facturas</a>
-            <a th:href="@{/logout}">Salir</a>
-        </nav>
-    </aside>
+    <aside th:replace="~{fragments/sidebar :: appSidebar('clientes')}"></aside>
 
     <main class="content">
-        <section class="page" style="padding-top:0;">
-            <header class="topbar">
+        <section class="page stack-lg">
+            <header class="page-header">
                 <div class="brand">
                     <h1>Clientes</h1>
-                    <p>Gestión de clientes residenciales y corporativos</p>
+                    <p>Gestion de clientes residenciales y corporativos.</p>
                 </div>
                 <div class="actions">
                     <a class="btn btn-primary" th:href="@{/clientes/nuevo}">Nuevo cliente</a>
                 </div>
             </header>
 
-            <section class="card">
-                <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse: collapse; border-color: #d9e2ec;">
-                    <thead style="background:#f8fafc;">
+            <section class="card table-wrap">
+                <table class="app-table">
+                    <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Dirección</th>
-                        <th>Teléfono</th>
+                        <th>Direccion</th>
+                        <th>Telefono</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(clientes)}">
-                        <td colspan="5" style="text-align:center; color:#5a6b7b;">No hay clientes registrados aún.</td>
+                        <td class="empty-row" colspan="5">No hay clientes registrados aun.</td>
                     </tr>
                     <tr th:each="c : ${clientes}">
                         <td th:text="${c.idCliente}"></td>
@@ -56,8 +45,8 @@
                         <td>
                             <div class="actions">
                                 <a class="btn btn-link" th:href="@{'/clientes/' + ${c.idCliente} + '/editar'}">Editar</a>
-                                <form th:action="@{'/clientes/' + ${c.idCliente} + '/eliminar'}" method="post" style="display:inline;">
-                                    <button type="submit">Eliminar</button>
+                                <form th:action="@{'/clientes/' + ${c.idCliente} + '/eliminar'}" method="post">
+                                    <button type="submit" class="btn-danger">Eliminar</button>
                                 </form>
                             </div>
                         </td>
