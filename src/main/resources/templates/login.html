@@ -8,26 +8,35 @@
 </head>
 <body>
 <main class="login-wrap">
-    <section class="card login-card">
-        <div class="brand">
+    <section class="login-shell">
+        <article class="login-hero">
             <h1>TelecomApp</h1>
-            <p>Panel de operación comercial y técnica</p>
-        </div>
+            <p>Panel profesional para la operacion comercial y tecnica. Gestiona clientes, planes, contratos y facturas en un solo flujo.</p>
+        </article>
 
-        <form th:action="@{/login}" method="post" style="margin-top: 12px;">
-            <label for="username">Usuario</label>
-            <input id="username" name="username" type="text" autocomplete="username" required>
+        <article class="login-card">
+            <h2>Iniciar sesion</h2>
+            <p>Ingresa tus credenciales para continuar.</p>
 
-            <label for="password">Clave</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <form th:action="@{/login}" method="post" class="form-stack mt-14">
+                <div>
+                    <label for="username">Usuario</label>
+                    <input id="username" name="username" type="text" autocomplete="username" required>
+                </div>
 
-            <div class="actions" style="margin-top: 16px;">
-                <button class="btn-primary" type="submit">Ingresar</button>
-            </div>
-        </form>
+                <div>
+                    <label for="password">Clave</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                </div>
 
-        <p class="notice" th:if="${param.error}">Usuario o clave incorrectos.</p>
-        <p style="margin-top: 12px; color: #0f766e;" th:if="${param.logout}">Sesión cerrada correctamente.</p>
+                <div class="actions mt-4">
+                    <button class="btn-primary" type="submit">Ingresar</button>
+                </div>
+            </form>
+
+            <p class="notice error" th:if="${param.error}">Usuario o clave incorrectos.</p>
+            <p class="notice success" th:if="${param.logout}">Sesion cerrada correctamente.</p>
+        </article>
     </section>
 </main>
 </body>
