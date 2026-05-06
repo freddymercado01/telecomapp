@@ -1,6 +1,7 @@
 package com.telecom.telecom_app.controller;
 
 import com.telecom.telecom_app.model.Plan;
+import com.telecom.telecom_app.model.TipoServicio;
 import com.telecom.telecom_app.service.PlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,6 +35,7 @@ public class PlanController {
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("plan", new Plan());
+        model.addAttribute("tiposServicio", TipoServicio.values());
         return "planes/form";
     }
 
@@ -50,6 +52,7 @@ public class PlanController {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable @Parameter(description = "ID del plan") Long id, Model model) {
         model.addAttribute("plan", planService.obtenerPorId(id));
+        model.addAttribute("tiposServicio", TipoServicio.values());
         return "planes/form";
     }
 

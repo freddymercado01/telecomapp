@@ -26,14 +26,16 @@ public class TelecomAppApplication {
 	) {
 		return args -> {
 
-			// 1) Crear admin si no existe
-			usuarioRepo.findByUsername("admin").orElseGet(() -> {
-				Usuario admin = new Usuario();
-				admin.setUsername("admin");
-				admin.setPasswordHash(passwordEncoder.encode("admin123"));
-				admin.setRol(Rol.ADMIN);
-				return usuarioRepo.save(admin);
+			// 1) Crear o normalizar el admin local
+			Usuario admin = usuarioRepo.findByUsername("admin").orElseGet(() -> {
+				Usuario nuevoAdmin = new Usuario();
+				nuevoAdmin.setUsername("admin");
+				nuevoAdmin.setRol(Rol.ADMIN);
+				return nuevoAdmin;
 			});
+			admin.setPasswordHash(passwordEncoder.encode("admin123"));
+			admin.setRol(Rol.ADMIN);
+			usuarioRepo.save(admin);
 
 			// 2) Crear vendedor demo + su usuario si no existe
 			Usuario vendedorUser = usuarioRepo.findByUsername("vendedor1").orElseGet(() -> {

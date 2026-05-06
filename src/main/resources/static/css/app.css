@@ -247,6 +247,16 @@ button.btn-primary:hover {
   background: #f3f8ff;
 }
 
+.btn-secondary {
+  background: #e8f7f4;
+  color: var(--secondary);
+  border-color: #a9dcd3;
+}
+
+.btn-secondary:hover {
+  background: #d9f0ec;
+}
+
 .btn-danger,
 button.btn-danger {
   background: #fff2f1;
@@ -450,6 +460,70 @@ textarea {
 
 .notice.success {
   color: var(--secondary);
+}
+
+.alert {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 700;
+}
+
+.alert-error {
+  color: var(--danger);
+  background: #fff2f1;
+  border: 1px solid #efc2bf;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(16, 33, 50, 0.45);
+  z-index: 20;
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal-card {
+  width: min(460px, 100%);
+  border-radius: 8px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+.modal-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+
+.modal-card p {
+  margin: 0 0 16px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.modal-success {
+  border-top: 5px solid var(--success);
+}
+
+.modal-error {
+  border-top: 5px solid var(--danger);
+}
+
+button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  transform: none;
+  background: var(--primary);
 }
 
 @media (max-width: 1024px) {

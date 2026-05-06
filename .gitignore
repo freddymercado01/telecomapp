@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local Spring Boot profile for H2 testing
+src/main/resources/application-h2.properties

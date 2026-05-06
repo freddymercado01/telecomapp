@@ -19,6 +19,7 @@
                 </div>
                 <div class="actions">
                     <a class="btn btn-primary" th:href="@{/clientes/nuevo}">Nuevo cliente</a>
+                    <a class="btn btn-secondary" th:href="@{/clientes/vender}">Venta de servicio</a>
                 </div>
             </header>
 
@@ -30,18 +31,20 @@
                         <th>Nombre</th>
                         <th>Direccion</th>
                         <th>Telefono</th>
+                        <th>Barrio</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(clientes)}">
-                        <td class="empty-row" colspan="5">No hay clientes registrados aun.</td>
+                        <td class="empty-row" colspan="6">No hay clientes registrados aun.</td>
                     </tr>
                     <tr th:each="c : ${clientes}">
                         <td th:text="${c.idCliente}"></td>
                         <td th:text="${c.nombre}"></td>
                         <td th:text="${c.direccion}"></td>
                         <td th:text="${c.telefono}"></td>
+                        <td th:text="${c.barrio != null ? c.barrio.nombre : 'N/A'}"></td>
                         <td>
                             <div class="actions">
                                 <a class="btn btn-link" th:href="@{'/clientes/' + ${c.idCliente} + '/editar'}">Editar</a>
