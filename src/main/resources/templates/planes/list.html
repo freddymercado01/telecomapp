@@ -5,17 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planes | TelecomApp</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app-ui.js}"></script>
 </head>
 <body>
 <div class="layout">
     <aside th:replace="~{fragments/sidebar :: appSidebar('planes')}"></aside>
 
     <main class="content">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <img th:src="@{/media/logo.png}" alt="Logo TelecomApp">
+                <div class="topbar-msg">
+                    <h1>Gestion telecom</h1>
+                    <p>Administra clientes, planes, contratos y facturacion.</p>
+                </div>
+            </div>
+            <span class="topbar-pill">Panel operativo</span>
+        </header>
+
         <section class="page stack-lg">
             <header class="page-header">
                 <div class="brand">
                     <h1>Planes</h1>
-                    <p>Gestion del catalogo comercial de servicios.</p>
+                    <p>Configura servicios, precios y disponibilidad comercial.</p>
                 </div>
                 <div class="actions">
                     <a class="btn btn-primary" th:href="@{/planes/nuevo}">Nuevo plan</a>
@@ -23,7 +35,13 @@
             </header>
 
             <section class="card table-wrap">
-                <table class="app-table">
+                <div class="table-toolbar">
+                    <div class="table-meta" th:text="${'Total planes: ' + #lists.size(planes)}"></div>
+                    <div class="table-search">
+                        <input type="text" placeholder="Buscar por nombre, tipo o precio..." data-table-search="planes-table">
+                    </div>
+                </div>
+                <table id="planes-table" class="app-table">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -35,10 +53,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(planes)}">
+                    <tr th:if="${#lists.isEmpty(planes)}" class="empty-row">
                         <td class="empty-row" colspan="6">No hay planes registrados aun.</td>
                     </tr>
-                    <tr th:each="p : ${planes}">
+                    <tr th:each="p : ${planes}" data-filter-row="true">
                         <td th:text="${p.idPlan}"></td>
                         <td th:text="${p.nombre}"></td>
                         <td th:text="${p.tipoServicio}"></td>
@@ -54,11 +72,14 @@
                                     <button type="submit" th:text="${p.activo} ? 'Desactivar' : 'Activar'"></button>
                                 </form>
 
-                                <form th:action="@{'/planes/' + ${p.idPlan} + '/eliminar'}" method="post">
+                                <form th:action="@{'/planes/' + ${p.idPlan} + '/eliminar'}" method="post" data-confirm="¿Eliminar este plan? Esta acción no se puede deshacer.">
                                     <button type="submit" class="btn-danger">Eliminar</button>
                                 </form>
                             </div>
                         </td>
+                    </tr>
+                    <tr class="no-results-row">
+                        <td class="empty-row" colspan="6">No hay resultados para la búsqueda actual.</td>
                     </tr>
                     </tbody>
                 </table>

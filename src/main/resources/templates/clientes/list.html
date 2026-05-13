@@ -5,17 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes | TelecomApp</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app-ui.js}"></script>
 </head>
 <body>
 <div class="layout">
     <aside th:replace="~{fragments/sidebar :: appSidebar('clientes')}"></aside>
 
     <main class="content">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <img th:src="@{/media/logo.png}" alt="Logo TelecomApp">
+                <div class="topbar-msg">
+                    <h1>Gestion telecom</h1>
+                    <p>Administra clientes, planes, contratos y facturacion.</p>
+                </div>
+            </div>
+            <span class="topbar-pill">Panel operativo</span>
+        </header>
+
         <section class="page stack-lg">
             <header class="page-header">
                 <div class="brand">
                     <h1>Clientes</h1>
-                    <p>Gestion de clientes residenciales y corporativos.</p>
+                    <p>Administra informacion de contacto, ubicacion y seguimiento comercial.</p>
                 </div>
                 <div class="actions">
                     <a class="btn btn-primary" th:href="@{/clientes/nuevo}">Nuevo cliente</a>
@@ -23,7 +35,13 @@
             </header>
 
             <section class="card table-wrap">
-                <table class="app-table">
+                <div class="table-toolbar">
+                    <div class="table-meta" th:text="${'Total clientes: ' + #lists.size(clientes)}"></div>
+                    <div class="table-search">
+                        <input type="text" placeholder="Buscar por nombre, direccion o telefono..." data-table-search="clientes-table">
+                    </div>
+                </div>
+                <table id="clientes-table" class="app-table">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -34,10 +52,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(clientes)}">
+                    <tr th:if="${#lists.isEmpty(clientes)}" class="empty-row">
                         <td class="empty-row" colspan="5">No hay clientes registrados aun.</td>
                     </tr>
-                    <tr th:each="c : ${clientes}">
+                    <tr th:each="c : ${clientes}" data-filter-row="true">
                         <td th:text="${c.idCliente}"></td>
                         <td th:text="${c.nombre}"></td>
                         <td th:text="${c.direccion}"></td>
@@ -45,11 +63,14 @@
                         <td>
                             <div class="actions">
                                 <a class="btn btn-link" th:href="@{'/clientes/' + ${c.idCliente} + '/editar'}">Editar</a>
-                                <form th:action="@{'/clientes/' + ${c.idCliente} + '/eliminar'}" method="post">
+                                <form th:action="@{'/clientes/' + ${c.idCliente} + '/eliminar'}" method="post" data-confirm="¿Eliminar este cliente? Esta acción no se puede deshacer.">
                                     <button type="submit" class="btn-danger">Eliminar</button>
                                 </form>
                             </div>
                         </td>
+                    </tr>
+                    <tr class="no-results-row">
+                        <td class="empty-row" colspan="5">No hay resultados para la búsqueda actual.</td>
                     </tr>
                     </tbody>
                 </table>
