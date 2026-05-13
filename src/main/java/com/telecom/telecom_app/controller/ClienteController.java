@@ -3,6 +3,7 @@ package com.telecom.telecom_app.controller;
 /* CRUD BASICO DE CLIENTE*/
 
 import com.telecom.telecom_app.model.Cliente;
+import com.telecom.telecom_app.model.Contrato;
 import com.telecom.telecom_app.service.BarrioService;
 import com.telecom.telecom_app.service.ClienteService;
 import com.telecom.telecom_app.service.PlanService;
@@ -86,8 +87,8 @@ public class ClienteController {
                          @RequestParam @Parameter(description = "ID del plan") Long planId,
                          Model model) {
         try {
-            ventaService.venderServicio(cliente, barrioId, planId);
-            return "redirect:/contratos";
+            Contrato contrato = ventaService.venderServicio(cliente, barrioId, planId);
+            return "redirect:/contratos/" + contrato.getIdContrato() + "/editar";
         } catch (IllegalArgumentException ex) {
             model.addAttribute("cliente", cliente);
             model.addAttribute("planes", planService.listarActivos());

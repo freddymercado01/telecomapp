@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -29,35 +30,32 @@ public class JwtFilter extends OncePerRequestFilter {
                                    FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 1. Obtener header Authorization
         String authHeader = request.getHeader("Authorization");
 
-        // 2. Verificar si existe y tiene Bearer
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-
             String token = authHeader.substring(7);
 
-            // 3. Validar token
-            if (jwtUtil.validateToken(token)) {
-
-                String username = jwtUtil.extractUsername(token);
-
-                var userDetails = userDetailsService.loadUserByUsername(username);
-
-                // 4. Crear autenticación
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-
-                // 5. Guardar en contexto de seguridad
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            // Si el token está presente pero es inválido, rechazar inmediatamente
+            if (!jwtUtil.validateToken(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write("{\"error\":\"Token inválido o expirado\"}");
+                return;
             }
+
+            String username = jwtUtil.extractUsername(token);
+            var userDetails = userDetailsService.loadUserByUsername(username);
+
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
-        // 6. Continuar request
         filterChain.doFilter(request, response);
     }
 }

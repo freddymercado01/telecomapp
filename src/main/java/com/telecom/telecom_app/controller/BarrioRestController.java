@@ -9,14 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +27,7 @@ public class BarrioRestController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Listar barrios", description = "Obtiene todos los barrios registrados")
     @ApiResponse(responseCode = "200", description = "Lista de barrios obtenida exitosamente")
     public ResponseEntity<List<Barrio>> listarTodos() {
@@ -40,6 +35,7 @@ public class BarrioRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Obtener barrio", description = "Busca un barrio por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Barrio encontrado"),
@@ -54,6 +50,7 @@ public class BarrioRestController {
     }
 
     @GetMapping("/{id}/cobertura")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Validar cobertura", description = "Retorna si el barrio tiene cobertura disponible")
     public ResponseEntity<Map<String, Object>> validarCobertura(@PathVariable Long id) {
         try {
@@ -70,12 +67,15 @@ public class BarrioRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear barrio", description = "Crea un barrio")
     public ResponseEntity<Barrio> crear(@RequestBody Barrio barrio) {
+        barrio.setIdBarrio(null);
         return ResponseEntity.status(201).body(barrioService.guardar(barrio));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar barrio", description = "Actualiza un barrio existente")
     public ResponseEntity<Barrio> actualizar(@PathVariable Long id, @RequestBody Barrio barrio) {
         try {
@@ -86,6 +86,7 @@ public class BarrioRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar barrio", description = "Elimina un barrio")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         try {

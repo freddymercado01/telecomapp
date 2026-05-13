@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class FacturaRestController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Listar todas las facturas", description = "Obtiene la lista completa de todas las facturas registradas")
     @ApiResponse(responseCode = "200", description = "Lista de facturas obtenida exitosamente")
     public ResponseEntity<List<Factura>> listarTodos() {
@@ -31,6 +33,7 @@ public class FacturaRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Obtener factura por ID", description = "Busca una factura específica utilizando su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Factura encontrada"),
@@ -46,14 +49,17 @@ public class FacturaRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nueva factura", description = "Crea una nueva factura en la base de datos")
     @ApiResponse(responseCode = "201", description = "Factura creada exitosamente")
     public ResponseEntity<Factura> crear(@RequestBody Factura factura) {
+        factura.setIdFactura(null);
         Factura facturaGuardada = facturaService.crear(factura);
         return ResponseEntity.status(201).body(facturaGuardada);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar factura", description = "Actualiza los datos de una factura existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Factura actualizada exitosamente"),
@@ -70,6 +76,7 @@ public class FacturaRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar factura", description = "Elimina una factura de la base de datos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Factura eliminada exitosamente"),
