@@ -648,3 +648,176 @@ textarea {
   font-size: 0.82rem;
   color: #5f6f82;
 }
+
+/* App shell polish */
+body {
+  background:
+    linear-gradient(rgba(247, 249, 252, 0.92), rgba(238, 243, 249, 0.96)),
+    url("/media/wellpaper.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.sidebar {
+  background:
+    linear-gradient(to bottom, rgba(7, 22, 45, 0.9), rgba(7, 22, 45, 0.96)),
+    url("/media/wellpaper.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  min-width: 0;
+}
+
+.sidebar-brand img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 6px;
+  flex-shrink: 0;
+}
+
+.sidebar-brand h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.1;
+}
+
+.sidebar-brand p {
+  margin: 3px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  color: #c7d8e8;
+}
+
+.sidebar-logout {
+  margin-top: 18px;
+}
+
+.sidebar-logout button {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.sidebar-logout button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.app-topbar {
+  min-height: 68px;
+  margin-bottom: 22px;
+  background: #ffffff;
+  border: 1px solid #d6dfeb;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+}
+
+.app-topbar img {
+  height: 42px;
+  width: auto;
+}
+
+.topbar-pill {
+  color: #4f6277;
+  font-weight: 700;
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.dashboard-hero {
+  min-height: 260px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 28px;
+  color: #ffffff;
+  background-image:
+    linear-gradient(to right, rgba(7, 22, 45, 0.82), rgba(7, 22, 45, 0.18)),
+    url("/media/solucionesfibra.png");
+  background-size: cover;
+  background-position: center;
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-hero div {
+  max-width: 560px;
+}
+
+.dashboard-hero span {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 800;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dashboard-hero h2 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.dashboard-hero p {
+  margin: 10px 0 0;
+  color: #edf4fb;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.card,
+.quick-link,
+.kpi {
+  border-radius: 14px;
+  border-color: #d6dfeb;
+}
+
+.page-header {
+  background: #ffffff;
+  border: 1px solid #d6dfeb;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.app-table thead th {
+  background: #eef5ff;
+  color: #1f3655;
+}
+
+.app-table tbody tr:hover {
+  background: #f6faff;
+}
+
+@media (max-width: 900px) {
+  .app-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-hero {
+    min-height: 240px;
+    padding: 22px;
+  }
+
+  .dashboard-hero h2 {
+    font-size: 1.55rem;
+  }
+}

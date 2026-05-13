@@ -11,11 +11,22 @@
     <aside th:replace="~{fragments/sidebar :: appSidebar('clientes')}"></aside>
 
     <main class="content">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <img th:src="@{/media/logo.png}" alt="Logo TelecomApp">
+                <div class="topbar-msg">
+                    <h1>Gestion telecom</h1>
+                    <p>Administra clientes, planes, contratos y facturacion.</p>
+                </div>
+            </div>
+            <span class="topbar-pill">Panel operativo</span>
+        </header>
+
         <section class="page stack-lg">
             <header class="page-header">
                 <div class="brand">
                     <h1>Clientes</h1>
-                    <p>Gestion de clientes residenciales y corporativos.</p>
+                    <p>Administra informacion de contacto, ubicacion y seguimiento comercial.</p>
                 </div>
                 <div class="actions">
                     <a class="btn btn-primary" th:href="@{/clientes/nuevo}">Nuevo cliente</a>
