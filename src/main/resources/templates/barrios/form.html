@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barrio | TelecomApp</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="layout">
+    <aside th:replace="~{fragments/sidebar :: appSidebar('barrios')}"></aside>
+
+    <main class="content">
+        <section class="page stack-lg">
+            <header class="page-header">
+                <div class="brand">
+                    <h1 th:text="${barrio.idBarrio} == null ? 'Nuevo barrio' : 'Editar barrio'"></h1>
+                    <p>Define si el barrio tiene cobertura disponible para nuevas ventas.</p>
+                </div>
+                <a class="btn btn-link" th:href="@{/barrios}">Volver</a>
+            </header>
+
+            <section class="card card-md">
+                <form th:action="@{/barrios}" method="post" th:object="${barrio}" class="form-stack">
+                    <input type="hidden" th:field="*{idBarrio}">
+
+                    <div class="form-grid">
+                        <div>
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" th:field="*{nombre}" required>
+                        </div>
+
+                        <div>
+                            <label for="cobertura">Cobertura</label>
+                            <select id="cobertura" th:field="*{cobertura}">
+                                <option th:value="true">Con cobertura</option>
+                                <option th:value="false">Sin cobertura</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="descripcion">Descripcion</label>
+                        <textarea id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
+                    </div>
+
+                    <div class="actions mt-4">
+                        <button class="btn-primary" type="submit">Guardar</button>
+                        <a class="btn btn-link" th:href="@{/barrios}">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>

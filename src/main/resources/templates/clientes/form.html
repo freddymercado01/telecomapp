@@ -52,6 +52,17 @@
                         <input id="direccion" th:field="*{direccion}" required>
                     </div>
 
+                    <div>
+                        <label for="barrioId">Barrio</label>
+                        <select id="barrioId" name="barrioId" required>
+                            <option value="" disabled th:selected="${cliente.barrio == null}">Seleccione un barrio</option>
+                            <option th:each="b : ${barrios}"
+                                    th:value="${b.idBarrio}"
+                                    th:selected="${cliente.barrio != null and cliente.barrio.idBarrio == b.idBarrio}"
+                                    th:text="${b.nombre + (b.cobertura ? ' (Cobertura)' : ' (Sin cobertura)')}"></option>
+                        </select>
+                    </div>
+
                     <div class="actions mt-4">
                         <button class="btn-primary" type="submit">Guardar</button>
                         <a class="btn btn-link" th:href="@{/clientes}">Cancelar</a>

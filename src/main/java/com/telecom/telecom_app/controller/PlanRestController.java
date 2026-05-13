@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class PlanRestController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Listar todos los planes", description = "Obtiene la lista completa de todos los planes de telecomunicaciones")
     @ApiResponse(responseCode = "200", description = "Lista de planes obtenida exitosamente")
     public ResponseEntity<List<Plan>> listarTodos() {
@@ -32,6 +34,7 @@ public class PlanRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Obtener plan por ID", description = "Busca un plan específico utilizando su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Plan encontrado"),
@@ -47,14 +50,17 @@ public class PlanRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nuevo plan", description = "Crea un nuevo plan de telecomunicaciones en la base de datos")
     @ApiResponse(responseCode = "201", description = "Plan creado exitosamente")
     public ResponseEntity<Plan> crear(@RequestBody Plan plan) {
+        plan.setIdPlan(null);
         Plan planGuardado = planService.guardar(plan);
         return ResponseEntity.status(201).body(planGuardado);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar plan", description = "Actualiza los datos de un plan existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Plan actualizado exitosamente"),
@@ -71,6 +77,7 @@ public class PlanRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar plan", description = "Elimina un plan de la base de datos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Plan eliminado exitosamente"),

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class ClienteRestController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Listar todos los clientes", description = "Obtiene la lista completa de todos los clientes registrados en la base de datos")
     @ApiResponse(responseCode = "200", description = "Lista de clientes obtenida exitosamente")
     public ResponseEntity<List<Cliente>> listarTodos() {
@@ -32,6 +34,7 @@ public class ClienteRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Obtener cliente por ID", description = "Busca un cliente específico utilizando su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
@@ -47,14 +50,17 @@ public class ClienteRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Crear nuevo cliente", description = "Crea un nuevo cliente en la base de datos")
     @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente")
     public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
+        cliente.setIdCliente(null);
         Cliente clienteGuardado = clienteService.guardar(cliente);
         return ResponseEntity.status(201).body(clienteGuardado);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Actualizar cliente", description = "Actualiza los datos de un cliente existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente"),
@@ -71,6 +77,7 @@ public class ClienteRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar cliente", description = "Elimina un cliente de la base de datos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Cliente eliminado exitosamente"),

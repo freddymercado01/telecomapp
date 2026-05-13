@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venta de servicio | TelecomApp</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="layout">
+    <aside th:replace="~{fragments/sidebar :: appSidebar('clientes')}"></aside>
+
+    <main class="content">
+        <section class="page stack-lg">
+            <header class="page-header">
+                <div class="brand">
+                    <h1>Venta de servicio de Internet</h1>
+                    <p>Registra el cliente, valida su barrio y genera el contrato y la factura automáticamente.</p>
+                </div>
+                <a class="btn btn-link" th:href="@{/clientes}">Volver</a>
+            </header>
+
+            <section class="card card-sm">
+                <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+                <form id="ventaForm" th:action="@{/clientes/vender}" method="post" th:object="${cliente}" class="form-stack">
+                    <div class="form-grid">
+                        <div>
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" th:field="*{nombre}" required>
+                        </div>
+                        <div>
+                            <label for="telefono">Telefono</label>
+                            <input id="telefono" th:field="*{telefono}" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="direccion">Direccion</label>
+                        <input id="direccion" th:field="*{direccion}" required>
+                    </div>
+
+                    <div class="form-grid">
+                        <div>
+                            <label for="barrioId">Barrio</label>
+                            <select id="barrioId" name="barrioId" required>
+                                <option value="" disabled selected>Seleccione un barrio</option>
+                                <option th:each="b : ${barrios}"
+                                        th:value="${b.idBarrio}"
+                                        th:text="${b.nombre + (b.cobertura ? '' : ' (sin cobertura)')}"></option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="planId">Plan</label>
+                            <select id="planId" name="planId" required>
+                                <option value="" disabled selected>Seleccione un plan</option>
+                                <option th:each="plan : ${planes}"
+                                        th:value="${plan.idPlan}"
+                                        th:text="${plan.nombre + ' - ' + plan.tipoServicio.etiqueta + ' - $' + plan.precioMensual}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="actions mt-4">
+                        <button id="submitSale" class="btn-primary" type="button" disabled>Vender servicio</button>
+                        <a class="btn btn-link" th:href="@{/clientes}">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+</div>
+
+<!-- Modal: validación de cobertura -->
+<div id="coverageModal" class="modal-backdrop" hidden>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="coverageTitle">
+        <h2 id="coverageTitle">Validacion de cobertura</h2>
+        <p id="coverageMessage"></p>
+        <div class="actions">
+            <button id="coverageClose" type="button" class="btn-primary">Aceptar</button>
+        </div>
+    </section>
+</div>
+
+<!-- Modal: confirmación de venta -->
+<div id="confirmModal" class="modal-backdrop" hidden>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <h2 id="confirmTitle">Confirmar venta</h2>
+        <p>Revisa los datos antes de continuar:</p>
+        <table style="width:100%; margin: 0.75rem 0; border-collapse: collapse;">
+            <tr><td style="padding: 4px 0; color: var(--color-muted);">Cliente</td><td id="confirmNombre" style="padding: 4px 0; font-weight: 600;"></td></tr>
+            <tr><td style="padding: 4px 0; color: var(--color-muted);">Barrio</td><td id="confirmBarrio" style="padding: 4px 0; font-weight: 600;"></td></tr>
+            <tr><td style="padding: 4px 0; color: var(--color-muted);">Plan</td><td id="confirmPlan" style="padding: 4px 0; font-weight: 600;"></td></tr>
+        </table>
+        <p style="font-size: 0.875rem; color: var(--color-muted);">Se generará el contrato y la primera factura automáticamente.</p>
+        <div class="actions">
+            <button id="confirmSubmit" type="button" class="btn-primary">Confirmar</button>
+            <button id="confirmCancel" type="button" class="btn btn-link">Volver al formulario</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    const form        = document.getElementById('ventaForm');
+    const barrioSelect = document.getElementById('barrioId');
+    const planSelect  = document.getElementById('planId');
+    const submitSale  = document.getElementById('submitSale');
+
+    // --- Modal cobertura ---
+    const coverageModal   = document.getElementById('coverageModal');
+    const coverageCard    = coverageModal.querySelector('.modal-card');
+    const coverageTitle   = document.getElementById('coverageTitle');
+    const coverageMessage = document.getElementById('coverageMessage');
+    const coverageClose   = document.getElementById('coverageClose');
+
+    function showCoverageModal(hasCoverage, message) {
+        coverageTitle.textContent = hasCoverage ? 'Con cobertura' : 'Sin cobertura';
+        coverageMessage.textContent = message;
+        coverageCard.classList.toggle('modal-success', hasCoverage);
+        coverageCard.classList.toggle('modal-error', !hasCoverage);
+        coverageModal.hidden = false;
+        coverageClose.focus();
+    }
+
+    barrioSelect.addEventListener('change', async () => {
+        submitSale.disabled = true;
+        const barrioId = barrioSelect.value;
+        if (!barrioId) return;
+
+        try {
+            const response = await fetch(`/api/barrios/${barrioId}/cobertura`);
+            if (!response.ok) {
+                showCoverageModal(false, 'No se pudo validar la cobertura del barrio seleccionado.');
+                return;
+            }
+            const data = await response.json();
+            submitSale.disabled = !data.cobertura;
+            const detail = data.descripcion ? ` ${data.descripcion}` : '';
+            showCoverageModal(
+                data.cobertura,
+                data.cobertura
+                    ? `${data.nombre} tiene cobertura disponible.${detail}`
+                    : `${data.nombre} no tiene cobertura disponible. No se puede continuar con la venta.${detail}`
+            );
+        } catch (error) {
+            showCoverageModal(false, 'No se pudo consultar el servicio de cobertura.');
+        }
+    });
+
+    coverageClose.addEventListener('click', () => { coverageModal.hidden = true; });
+
+    // --- Modal confirmación ---
+    const confirmModal  = document.getElementById('confirmModal');
+    const confirmSubmit = document.getElementById('confirmSubmit');
+    const confirmCancel = document.getElementById('confirmCancel');
+
+    submitSale.addEventListener('click', () => {
+        const nombre  = document.getElementById('nombre').value.trim();
+        const barrioText = barrioSelect.options[barrioSelect.selectedIndex]?.text ?? '';
+        const planText   = planSelect.options[planSelect.selectedIndex]?.text ?? '';
+
+        if (!nombre || !barrioSelect.value || !planSelect.value) {
+            form.reportValidity();
+            return;
+        }
+
+        document.getElementById('confirmNombre').textContent = nombre;
+        document.getElementById('confirmBarrio').textContent = barrioText;
+        document.getElementById('confirmPlan').textContent   = planText;
+
+        confirmModal.hidden = false;
+        confirmSubmit.focus();
+    });
+
+    confirmSubmit.addEventListener('click', () => { form.submit(); });
+    confirmCancel.addEventListener('click', () => { confirmModal.hidden = true; });
+</script>
+</body>
+</html>

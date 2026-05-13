@@ -13,6 +13,7 @@
     <nav class="side-nav">
         <a th:href="@{/dashboard}" th:classappend="${currentMenu == 'dashboard'} ? 'active' : ''">Dashboard</a>
         <a th:href="@{/clientes}" th:classappend="${currentMenu == 'clientes'} ? 'active' : ''">Clientes</a>
+        <a th:href="@{/barrios}" th:classappend="${currentMenu == 'barrios'} ? 'active' : ''">Barrios</a>
         <a th:href="@{/planes}" th:classappend="${currentMenu == 'planes'} ? 'active' : ''">Planes</a>
         <a th:href="@{/contratos}" th:classappend="${currentMenu == 'contratos'} ? 'active' : ''">Contratos</a>
         <a th:href="@{/facturas}" th:classappend="${currentMenu == 'facturas'} ? 'active' : ''">Facturas</a>

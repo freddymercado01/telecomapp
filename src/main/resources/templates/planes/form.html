@@ -43,7 +43,12 @@
 
                         <div>
                             <label for="tipoServicio">Tipo de servicio</label>
-                            <input id="tipoServicio" th:field="*{tipoServicio}" placeholder="Internet, Voz, TV, Movil..." required>
+                            <select id="tipoServicio" th:field="*{tipoServicio}" required>
+                                <option value="" disabled th:selected="${plan.tipoServicio == null}">Seleccione un tipo</option>
+                                <option th:each="tipo : ${tiposServicio}"
+                                        th:value="${tipo.name()}"
+                                        th:text="${tipo.etiqueta}"></option>
+                            </select>
                         </div>
                     </div>
 

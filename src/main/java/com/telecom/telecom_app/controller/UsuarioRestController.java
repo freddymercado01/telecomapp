@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class UsuarioRestController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Listar todos los usuarios", description = "Obtiene la lista completa de todos los usuarios del sistema")
     @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente")
     public ResponseEntity<List<Usuario>> listarTodos() {
@@ -32,6 +34,7 @@ public class UsuarioRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Obtener usuario por ID", description = "Busca un usuario específico utilizando su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
@@ -47,14 +50,17 @@ public class UsuarioRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nuevo usuario", description = "Crea un nuevo usuario en el sistema")
     @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
     public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
+        usuario.setId(null);
         Usuario usuarioGuardado = usuarioService.crear(usuario);
         return ResponseEntity.status(201).body(usuarioGuardado);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar usuario", description = "Actualiza los datos de un usuario existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente"),
@@ -71,6 +77,7 @@ public class UsuarioRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario del sistema")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente"),

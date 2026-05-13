@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,13 +14,16 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
+    @Value("${app.server-url}")
+    private String serverUrl;
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .servers(List.of(
                         new Server()
-                                .url("https://telecomapp-production.up.railway.app")
-                                .description("Railway HTTPS")
+                                .url(serverUrl)
+                                .description("Servidor activo")
                 ))
                 .info(new Info()
                         .title("Telecom App API")

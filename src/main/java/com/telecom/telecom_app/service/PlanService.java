@@ -23,6 +23,13 @@ public class PlanService {
         return planRepository.findAll();
     }
 
+    public List<Plan> listarActivos() {
+        return planRepository.findAll()
+                .stream()
+                .filter(Plan::isActivo)
+                .toList();
+    }
+
     public Plan obtenerPorId(Long id) {
         return planRepository.findById(id).orElseThrow();
     }

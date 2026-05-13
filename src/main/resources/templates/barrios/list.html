@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barrios | TelecomApp</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="layout">
+    <aside th:replace="~{fragments/sidebar :: appSidebar('barrios')}"></aside>
+
+    <main class="content">
+        <section class="page stack-lg">
+            <header class="page-header">
+                <div class="brand">
+                    <h1>Barrios</h1>
+                    <p>Gestion de cobertura por zona para el flujo comercial.</p>
+                </div>
+                <div class="actions">
+                    <a class="btn btn-primary" th:href="@{/barrios/nuevo}">Nuevo barrio</a>
+                </div>
+            </header>
+
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+            <section class="card table-wrap">
+                <table class="app-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Barrio</th>
+                        <th>Cobertura</th>
+                        <th>Descripcion</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(barrios)}">
+                        <td class="empty-row" colspan="5">No hay barrios registrados aun.</td>
+                    </tr>
+                    <tr th:each="b : ${barrios}">
+                        <td th:text="${b.idBarrio}"></td>
+                        <td th:text="${b.nombre}"></td>
+                        <td>
+                            <span class="status-chip"
+                                  th:classappend="${b.cobertura} ? ' status-active' : ' status-inactive'"
+                                  th:text="${b.cobertura} ? 'Con cobertura' : 'Sin cobertura'"></span>
+                        </td>
+                        <td th:text="${b.descripcion}"></td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn btn-link" th:href="@{'/barrios/' + ${b.idBarrio} + '/editar'}">Editar</a>
+                                <form th:action="@{'/barrios/' + ${b.idBarrio} + '/eliminar'}" method="post">
+                                    <button type="submit" class="btn-danger">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>

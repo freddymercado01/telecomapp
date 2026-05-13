@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class HealthController {
 
     @GetMapping("/")
-    @ResponseBody
-    public ResponseEntity<String> root() {
-        return ResponseEntity.ok("telecomapp ok");
+    public String root() {
+        return "redirect:/login";
     }
 
     @GetMapping("/up")

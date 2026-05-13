@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class VendedorRestController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Listar todos los vendedores", description = "Obtiene la lista completa de todos los vendedores registrados")
     @ApiResponse(responseCode = "200", description = "Lista de vendedores obtenida exitosamente")
     public ResponseEntity<List<Vendedor>> listarTodos() {
@@ -32,6 +34,7 @@ public class VendedorRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @Operation(summary = "Obtener vendedor por ID", description = "Busca un vendedor específico utilizando su ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vendedor encontrado"),
@@ -47,14 +50,17 @@ public class VendedorRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear nuevo vendedor", description = "Crea un nuevo vendedor en la base de datos")
     @ApiResponse(responseCode = "201", description = "Vendedor creado exitosamente")
     public ResponseEntity<Vendedor> crear(@RequestBody Vendedor vendedor) {
+        vendedor.setIdVendedor(null);
         Vendedor vendedorGuardado = vendedorService.guardar(vendedor);
         return ResponseEntity.status(201).body(vendedorGuardado);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar vendedor", description = "Actualiza los datos de un vendedor existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vendedor actualizado exitosamente"),
@@ -71,6 +77,7 @@ public class VendedorRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar vendedor", description = "Elimina un vendedor de la base de datos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Vendedor eliminado exitosamente"),

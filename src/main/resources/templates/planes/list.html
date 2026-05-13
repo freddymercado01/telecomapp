@@ -59,7 +59,7 @@
                     <tr th:each="p : ${planes}" data-filter-row="true">
                         <td th:text="${p.idPlan}"></td>
                         <td th:text="${p.nombre}"></td>
-                        <td th:text="${p.tipoServicio}"></td>
+                        <td th:text="${p.tipoServicio.etiqueta}"></td>
                         <td th:text="${#numbers.formatDecimal(p.precioMensual, 1, 'POINT', 2, 'COMMA')}"></td>
                         <td>
                             <span class="status-chip" th:classappend="${p.activo} ? ' status-active' : ' status-inactive'" th:text="${p.activo} ? 'Si' : 'No'"></span>
