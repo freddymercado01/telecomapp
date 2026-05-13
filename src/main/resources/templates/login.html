@@ -8,35 +8,45 @@
 </head>
 <body>
 <main class="login-wrap">
-    <section class="login-shell">
-        <article class="login-hero">
-            <h1>TelecomApp</h1>
-            <p>Panel profesional para la operacion comercial y tecnica. Gestiona clientes, planes, contratos y facturas en un solo flujo.</p>
-        </article>
-
-        <article class="login-card">
-            <h2>Iniciar sesion</h2>
-            <p>Ingresa tus credenciales para continuar.</p>
-
-            <form th:action="@{/login}" method="post" class="form-stack mt-14">
-                <div>
-                    <label for="username">Usuario</label>
-                    <input id="username" name="username" type="text" autocomplete="username" required>
+    <section class="login-layout">
+        <header class="login-topbar">
+            <div class="topbar-left">
+                <img th:src="@{/media/logo.png}" alt="Logo TelecomApp">
+                <div class="topbar-msg">
+                    <h1>Conecta tus servicios en un solo lugar</h1>
+                    <p>Administra clientes, planes, contratos y facturas desde una experiencia moderna.</p>
                 </div>
+            </div>
+            <p>Portal de gestion comercial</p>
+        </header>
 
-                <div>
-                    <label for="password">Clave</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required>
-                </div>
+        <section class="login-shell">
+            <article class="login-card">
+                <h2>Iniciar sesion</h2>
+                <p>Ingresa tus credenciales para continuar.</p>
 
-                <div class="actions mt-4">
-                    <button class="btn-primary" type="submit">Ingresar</button>
-                </div>
-            </form>
+                <form th:action="@{/login}" method="post" class="form-stack mt-14">
+                    <div>
+                        <label for="username">Usuario</label>
+                        <input id="username" name="username" type="text" autocomplete="username" required>
+                    </div>
 
-            <p class="notice error" th:if="${param.error}">Usuario o clave incorrectos.</p>
-            <p class="notice success" th:if="${param.logout}">Sesion cerrada correctamente.</p>
-        </article>
+                    <div>
+                        <label for="password">Clave</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="actions mt-4">
+                        <button class="btn-primary" type="submit">Ingresar</button>
+                    </div>
+                </form>
+
+                <p class="notice error" th:if="${param.error}">Usuario o clave incorrectos.</p>
+                <p class="notice success" th:if="${param.logout}">Sesion cerrada correctamente.</p>
+            </article>
+
+            <article class="login-visual"></article>
+        </section>
     </section>
 </main>
 </body>

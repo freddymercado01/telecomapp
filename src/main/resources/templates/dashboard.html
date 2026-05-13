@@ -11,6 +11,17 @@
     <aside th:replace="~{fragments/sidebar :: appSidebar('dashboard')}"></aside>
 
     <main class="content">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <img th:src="@{/media/logo.png}" alt="Logo TelecomApp">
+                <div class="topbar-msg">
+                    <h1>Gestion telecom</h1>
+                    <p>Administra clientes, planes, contratos y facturacion.</p>
+                </div>
+            </div>
+            <span class="topbar-pill">Panel operativo</span>
+        </header>
+
         <section class="page">
             <header class="page-header">
                 <div class="brand">
@@ -18,6 +29,14 @@
                     <p>Resumen de modulos y accesos rapidos de gestion telecom.</p>
                 </div>
             </header>
+
+            <section class="dashboard-hero">
+                <div>
+                    <span>Operacion comercial</span>
+                    <h2>Controla tus servicios desde una sola vista</h2>
+                    <p>Consulta clientes, contratos activos, planes disponibles y seguimiento de facturacion.</p>
+                </div>
+            </section>
 
             <section class="grid grid-4">
                 <article class="kpi">

@@ -34,8 +34,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // CSRF deshabilitado intencionalmente: la API usa JWT en el header Authorization,
-            // no cookies de sesión. Sin cookies, el ataque CSRF no aplica.
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -46,6 +44,7 @@ public class SecurityConfig {
                     "/error",
                     "/favicon.ico",
                     "/css/**",
+                    "/media/**",
                     "/auth/**",
                     "/api/auth/**",
                     "/v3/api-docs/**",
