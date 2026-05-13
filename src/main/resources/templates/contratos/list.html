@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contratos | TelecomApp</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app-ui.js}"></script>
 </head>
 <body>
 <div class="layout">
@@ -34,7 +35,13 @@
             </header>
 
             <section class="card table-wrap">
-                <table class="app-table">
+                <div class="table-toolbar">
+                    <div class="table-meta" th:text="${'Total contratos: ' + #lists.size(contratos)}"></div>
+                    <div class="table-search">
+                        <input type="text" placeholder="Buscar por cliente, plan o estado..." data-table-search="contratos-table">
+                    </div>
+                </div>
+                <table id="contratos-table" class="app-table">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -47,10 +54,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(contratos)}">
+                    <tr th:if="${#lists.isEmpty(contratos)}" class="empty-row">
                         <td class="empty-row" colspan="7">No hay contratos registrados aun.</td>
                     </tr>
-                    <tr th:each="c : ${contratos}">
+                    <tr th:each="c : ${contratos}" data-filter-row="true">
                         <td th:text="${c.idContrato}"></td>
                         <td th:text="${c.cliente.nombre}"></td>
                         <td th:text="${c.plan.nombre}"></td>
@@ -62,11 +69,14 @@
                         <td>
                             <div class="actions">
                                 <a class="btn btn-link" th:href="@{'/contratos/' + ${c.idContrato} + '/editar'}">Editar</a>
-                                <form th:action="@{'/contratos/' + ${c.idContrato} + '/eliminar'}" method="post">
+                                <form th:action="@{'/contratos/' + ${c.idContrato} + '/eliminar'}" method="post" data-confirm="¿Eliminar este contrato? Se perderá su relación de infraestructura.">
                                     <button type="submit" class="btn-danger">Eliminar</button>
                                 </form>
                             </div>
                         </td>
+                    </tr>
+                    <tr class="no-results-row">
+                        <td class="empty-row" colspan="7">No hay resultados para la búsqueda actual.</td>
                     </tr>
                     </tbody>
                 </table>

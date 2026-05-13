@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facturas | TelecomApp</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app-ui.js}"></script>
 </head>
 <body>
 <div class="layout">
@@ -51,7 +52,13 @@
             </section>
 
             <section class="card table-wrap">
-                <table class="app-table">
+                <div class="table-toolbar">
+                    <div class="table-meta" th:text="${'Total facturas: ' + #lists.size(facturas)}"></div>
+                    <div class="table-search">
+                        <input type="text" placeholder="Buscar por cliente, contrato o estado..." data-table-search="facturas-table">
+                    </div>
+                </div>
+                <table id="facturas-table" class="app-table">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -64,10 +71,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(facturas)}">
+                    <tr th:if="${#lists.isEmpty(facturas)}" class="empty-row">
                         <td class="empty-row" colspan="7">No hay facturas registradas aun.</td>
                     </tr>
-                    <tr th:each="f : ${facturas}">
+                    <tr th:each="f : ${facturas}" data-filter-row="true">
                         <td th:text="${f.idFactura}"></td>
                         <td th:text="${f.contrato.idContrato}"></td>
                         <td th:text="${f.contrato.cliente.nombre}"></td>
@@ -89,11 +96,14 @@
                                     <button type="submit">Actualizar</button>
                                 </form>
 
-                                <form th:action="@{'/facturas/' + ${f.idFactura} + '/eliminar'}" method="post">
+                                <form th:action="@{'/facturas/' + ${f.idFactura} + '/eliminar'}" method="post" data-confirm="¿Eliminar esta factura? Esta acción no se puede deshacer.">
                                     <button type="submit" class="btn-danger">Eliminar</button>
                                 </form>
                             </div>
                         </td>
+                    </tr>
+                    <tr class="no-results-row">
+                        <td class="empty-row" colspan="7">No hay resultados para la búsqueda actual.</td>
                     </tr>
                     </tbody>
                 </table>
