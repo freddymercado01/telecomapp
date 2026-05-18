@@ -5,12 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barrios | TelecomApp</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app-ui.js}"></script>
 </head>
 <body>
 <div class="layout">
     <aside th:replace="~{fragments/sidebar :: appSidebar('barrios')}"></aside>
 
     <main class="content">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <img th:src="@{/media/logo.png}" alt="Logo TelecomApp">
+                <div class="topbar-msg">
+                    <h1>Gestion telecom</h1>
+                    <p>Administra clientes, planes, contratos y facturacion.</p>
+                </div>
+            </div>
+            <span class="topbar-pill">Panel operativo</span>
+        </header>
+
         <section class="page stack-lg">
             <header class="page-header">
                 <div class="brand">
@@ -25,7 +37,13 @@
             <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
             <section class="card table-wrap">
-                <table class="app-table">
+                <div class="table-toolbar">
+                    <div class="table-meta" th:text="${'Total barrios: ' + #lists.size(barrios)}"></div>
+                    <div class="table-search">
+                        <input type="text" placeholder="Buscar por nombre, cobertura o descripcion..." data-table-search="barrios-table">
+                    </div>
+                </div>
+                <table id="barrios-table" class="app-table">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -36,10 +54,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(barrios)}">
+                    <tr th:if="${#lists.isEmpty(barrios)}" class="empty-row">
                         <td class="empty-row" colspan="5">No hay barrios registrados aun.</td>
                     </tr>
-                    <tr th:each="b : ${barrios}">
+                    <tr th:each="b : ${barrios}" data-filter-row="true">
                         <td th:text="${b.idBarrio}"></td>
                         <td th:text="${b.nombre}"></td>
                         <td>
@@ -51,11 +69,14 @@
                         <td>
                             <div class="actions">
                                 <a class="btn btn-link" th:href="@{'/barrios/' + ${b.idBarrio} + '/editar'}">Editar</a>
-                                <form th:action="@{'/barrios/' + ${b.idBarrio} + '/eliminar'}" method="post">
+                                <form th:action="@{'/barrios/' + ${b.idBarrio} + '/eliminar'}" method="post" data-confirm="¿Eliminar este barrio? Esta acción no se puede deshacer.">
                                     <button type="submit" class="btn-danger">Eliminar</button>
                                 </form>
                             </div>
                         </td>
+                    </tr>
+                    <tr class="no-results-row">
+                        <td class="empty-row" colspan="5">No hay resultados para la búsqueda actual.</td>
                     </tr>
                     </tbody>
                 </table>

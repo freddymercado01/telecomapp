@@ -11,6 +11,17 @@
     <aside th:replace="~{fragments/sidebar :: appSidebar('barrios')}"></aside>
 
     <main class="content">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <img th:src="@{/media/logo.png}" alt="Logo TelecomApp">
+                <div class="topbar-msg">
+                    <h1>Gestion telecom</h1>
+                    <p>Administra clientes, planes, contratos y facturacion.</p>
+                </div>
+            </div>
+            <span class="topbar-pill">Panel operativo</span>
+        </header>
+
         <section class="page stack-lg">
             <header class="page-header">
                 <div class="brand">

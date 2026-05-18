@@ -40,7 +40,7 @@
                             <option value="" disabled selected>Seleccione un contrato</option>
                             <option th:each="c : ${contratos}"
                                     th:value="${c.idContrato}"
-                                    th:text="${'Contrato ' + c.idContrato + ' - ' + c.cliente.nombre + ' - ' + c.plan.nombre}">
+                                    th:text="${'Contrato ' + c.idContrato + ' - ' + (c.cliente != null ? c.cliente.nombre : 'Sin cliente') + ' - ' + (c.plan != null ? c.plan.nombre : 'Sin plan')}">
                             </option>
                         </select>
                     </div>
@@ -76,12 +76,14 @@
                     </tr>
                     <tr th:each="f : ${facturas}" data-filter-row="true">
                         <td th:text="${f.idFactura}"></td>
-                        <td th:text="${f.contrato.idContrato}"></td>
-                        <td th:text="${f.contrato.cliente.nombre}"></td>
-                        <td th:text="${f.fechaEmision}"></td>
-                        <td th:text="${#numbers.formatDecimal(f.total, 1, 'POINT', 2, 'COMMA')}"></td>
+                        <td th:text="${f.contrato != null ? f.contrato.idContrato : 'Sin contrato'}"></td>
+                        <td th:text="${f.contrato != null and f.contrato.cliente != null ? f.contrato.cliente.nombre : 'Sin cliente'}"></td>
+                        <td th:text="${f.fechaEmision != null ? f.fechaEmision : 'Sin fecha'}"></td>
+                        <td th:text="${f.total != null ? #numbers.formatDecimal(f.total, 1, 'POINT', 2, 'COMMA') : '0,00'}"></td>
                         <td>
-                            <span class="status-chip" th:classappend="${f.estado.name() == 'PAGADA'} ? ' status-active' : ' status-inactive'" th:text="${f.estado}"></span>
+                            <span class="status-chip"
+                                  th:classappend="${f.estado != null and f.estado.name() == 'PAGADA'} ? ' status-active' : ' status-inactive'"
+                                  th:text="${f.estado != null ? f.estado : 'SIN_ESTADO'}"></span>
                         </td>
                         <td>
                             <div class="actions">
@@ -93,7 +95,7 @@
                                                 th:selected="${e == f.estado}">
                                         </option>
                                     </select>
-                                    <button type="submit">Actualizar</button>
+                                    <button type="submit" class="btn-secondary">Actualizar</button>
                                 </form>
 
                                 <form th:action="@{'/facturas/' + ${f.idFactura} + '/eliminar'}" method="post" data-confirm="¿Eliminar esta factura? Esta acción no se puede deshacer.">

@@ -59,12 +59,14 @@
                     </tr>
                     <tr th:each="c : ${contratos}" data-filter-row="true">
                         <td th:text="${c.idContrato}"></td>
-                        <td th:text="${c.cliente.nombre}"></td>
-                        <td th:text="${c.plan.nombre}"></td>
-                        <td th:text="${c.vendedor.nombre}"></td>
-                        <td th:text="${c.fechaInicio}"></td>
+                        <td th:text="${c.cliente != null ? c.cliente.nombre : 'Sin cliente'}"></td>
+                        <td th:text="${c.plan != null ? c.plan.nombre : 'Sin plan'}"></td>
+                        <td th:text="${c.vendedor != null ? c.vendedor.nombre : 'Sin vendedor'}"></td>
+                        <td th:text="${c.fechaInicio != null ? c.fechaInicio : 'Sin fecha'}"></td>
                         <td>
-                            <span class="status-chip" th:classappend="${c.estado.name() == 'ACTIVO'} ? ' status-active' : ' status-inactive'" th:text="${c.estado}"></span>
+                            <span class="status-chip"
+                                  th:classappend="${c.estado != null and c.estado.name() == 'ACTIVO'} ? ' status-active' : ' status-inactive'"
+                                  th:text="${c.estado != null ? c.estado : 'SIN_ESTADO'}"></span>
                         </td>
                         <td>
                             <div class="actions">
