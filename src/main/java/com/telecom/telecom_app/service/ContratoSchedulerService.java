@@ -31,7 +31,11 @@ public class ContratoSchedulerService {
      * Ejecuta diariamente a la 1 AM.
      * Inactiva contratos activos cuya primera factura lleva más de 1 mes pendiente de pago.
      */
-    @Scheduled(cron = "0 0 1 * * *")
+    //@Scheduled(cron = "0 0 1 * * *") // a la 1am de cada dia
+
+    @Scheduled(cron = "0 * * * * *") //cada minuto
+
+    
     @Transactional
     public void inactivarPorFacturaPendiente() {
         LocalDate hoy = LocalDate.now();
