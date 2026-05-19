@@ -52,6 +52,9 @@ public class ContratoService {
         contrato.setCliente(cliente);
         contrato.setPlan(plan);
         contrato.setVendedor(vendedor);
+        if (contrato.getFechaInicio() != null) {
+            contrato.setFechaFin(contrato.getFechaInicio().plusMonths(6));
+        }
         return contratoRepository.save(contrato);
     }
 

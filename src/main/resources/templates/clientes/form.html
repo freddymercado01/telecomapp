@@ -43,7 +43,12 @@
 
                         <div>
                             <label for="telefono">Telefono</label>
-                            <input id="telefono" th:field="*{telefono}" required>
+                            <input id="telefono" th:field="*{telefono}" required
+                                   inputmode="numeric" maxlength="10" pattern="[0-9]{1,10}">
+                            <span id="telefono-error" hidden
+                                  style="color:#dc3545;font-size:0.8rem;margin-top:0.25rem;display:block;">
+                                El teléfono debe contener únicamente números y no puede superar los 10 dígitos.
+                            </span>
                         </div>
                     </div>
 
@@ -72,5 +77,16 @@
         </section>
     </main>
 </div>
+<script>
+(function () {
+    const tel = document.getElementById('telefono');
+    const err = document.getElementById('telefono-error');
+    tel.addEventListener('input', () => {
+        tel.value = tel.value.replace(/[^0-9]/g, '').slice(0, 10);
+        err.hidden = tel.value === '' || /^[0-9]{1,10}$/.test(tel.value);
+    });
+    tel.addEventListener('invalid', (e) => { e.preventDefault(); err.hidden = false; });
+})();
+</script>
 </body>
 </html>

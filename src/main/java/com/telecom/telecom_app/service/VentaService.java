@@ -58,7 +58,9 @@ public class VentaService {
         }
 
         Contrato contrato = new Contrato();
-        contrato.setFechaInicio(LocalDate.now());
+        LocalDate fechaInicio = LocalDate.now();
+        contrato.setFechaInicio(fechaInicio);
+        contrato.setFechaFin(fechaInicio.plusMonths(6));
         contrato.setEstado(EstadoContrato.ACTIVO);
         contrato.setCliente(clienteGuardado);
         contrato.setPlan(plan);

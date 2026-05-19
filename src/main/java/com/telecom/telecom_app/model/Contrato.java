@@ -16,6 +16,8 @@ public class Contrato {
     @Enumerated(EnumType.STRING)
     private EstadoContrato estado = EstadoContrato.ACTIVO;
 
+    private String motivoInactivacion;
+
     // Relaciones
     @ManyToOne(optional = false)
     private Cliente cliente;
@@ -31,6 +33,9 @@ public class Contrato {
 
     @OneToMany(mappedBy = "contrato", cascade = CascadeType.ALL)
     private List<Factura> facturas = new ArrayList<>();
+
+    public String getMotivoInactivacion() { return motivoInactivacion; }
+    public void setMotivoInactivacion(String motivoInactivacion) { this.motivoInactivacion = motivoInactivacion; }
 
     public Long getIdContrato() { return idContrato; }
     public LocalDate getFechaInicio() { return fechaInicio; }
