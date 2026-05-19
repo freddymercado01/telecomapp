@@ -33,7 +33,7 @@ public class ContratoSchedulerService {
      */
     //@Scheduled(cron = "0 0 1 * * *") // a la 1am de cada dia
 
-    @Scheduled(cron = "0 * * * * *") //cada minuto
+    @Scheduled(cron = "0 0 * * * *") //cada hora
 
     
     @Transactional
