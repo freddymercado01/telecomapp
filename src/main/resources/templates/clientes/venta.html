@@ -30,7 +30,12 @@
                         </div>
                         <div>
                             <label for="telefono">Telefono</label>
-                            <input id="telefono" th:field="*{telefono}" required>
+                            <input id="telefono" th:field="*{telefono}" required
+                                   inputmode="numeric" maxlength="10" pattern="[0-9]{1,10}">
+                            <span id="telefono-error" hidden
+                                  style="color:#dc3545;font-size:0.8rem;margin-top:0.25rem;display:block;">
+                                El teléfono debe contener únicamente números y no puede superar los 10 dígitos.
+                            </span>
                         </div>
                     </div>
 
@@ -55,6 +60,8 @@
                                 <option value="" disabled selected>Seleccione un plan</option>
                                 <option th:each="plan : ${planes}"
                                         th:value="${plan.idPlan}"
+                                        th:data-nombre="${plan.nombre + ' - ' + plan.tipoServicio.etiqueta}"
+                                        th:data-precio="${plan.precioMensual}"
                                         th:text="${plan.nombre + ' - ' + plan.tipoServicio.etiqueta + ' - $' + plan.precioMensual}"></option>
                             </select>
                         </div>
@@ -90,6 +97,7 @@
             <tr><td style="padding: 4px 0; color: var(--color-muted);">Cliente</td><td id="confirmNombre" style="padding: 4px 0; font-weight: 600;"></td></tr>
             <tr><td style="padding: 4px 0; color: var(--color-muted);">Barrio</td><td id="confirmBarrio" style="padding: 4px 0; font-weight: 600;"></td></tr>
             <tr><td style="padding: 4px 0; color: var(--color-muted);">Plan</td><td id="confirmPlan" style="padding: 4px 0; font-weight: 600;"></td></tr>
+            <tr><td style="padding: 4px 0; color: var(--color-muted);">Costo</td><td id="confirmCosto" style="padding: 4px 0; font-weight: 600;"></td></tr>
         </table>
         <p style="font-size: 0.875rem; color: var(--color-muted);">Se generará el contrato y la primera factura automáticamente.</p>
         <div class="actions">
@@ -100,10 +108,19 @@
 </div>
 
 <script>
-    const form        = document.getElementById('ventaForm');
+    const form         = document.getElementById('ventaForm');
     const barrioSelect = document.getElementById('barrioId');
-    const planSelect  = document.getElementById('planId');
-    const submitSale  = document.getElementById('submitSale');
+    const planSelect   = document.getElementById('planId');
+    const submitSale   = document.getElementById('submitSale');
+
+    // --- Validacion telefono ---
+    const telInput = document.getElementById('telefono');
+    const telError = document.getElementById('telefono-error');
+    telInput.addEventListener('input', () => {
+        telInput.value = telInput.value.replace(/[^0-9]/g, '').slice(0, 10);
+        telError.hidden = telInput.value === '' || /^[0-9]{1,10}$/.test(telInput.value);
+    });
+    telInput.addEventListener('invalid', (e) => { e.preventDefault(); telError.hidden = false; });
 
     // --- Modal cobertura ---
     const coverageModal   = document.getElementById('coverageModal');
@@ -148,15 +165,17 @@
 
     coverageClose.addEventListener('click', () => { coverageModal.hidden = true; });
 
-    // --- Modal confirmación ---
+    // --- Modal confirmacion ---
     const confirmModal  = document.getElementById('confirmModal');
     const confirmSubmit = document.getElementById('confirmSubmit');
     const confirmCancel = document.getElementById('confirmCancel');
 
     submitSale.addEventListener('click', () => {
-        const nombre  = document.getElementById('nombre').value.trim();
+        const nombre     = document.getElementById('nombre').value.trim();
         const barrioText = barrioSelect.options[barrioSelect.selectedIndex]?.text ?? '';
-        const planText   = planSelect.options[planSelect.selectedIndex]?.text ?? '';
+        const selectedPlan = planSelect.options[planSelect.selectedIndex];
+        const planNombre = selectedPlan?.dataset?.nombre ?? selectedPlan?.text ?? '';
+        const planPrecio = selectedPlan?.dataset?.precio ? '$' + selectedPlan.dataset.precio : '';
 
         if (!nombre || !barrioSelect.value || !planSelect.value) {
             form.reportValidity();
@@ -165,7 +184,8 @@
 
         document.getElementById('confirmNombre').textContent = nombre;
         document.getElementById('confirmBarrio').textContent = barrioText;
-        document.getElementById('confirmPlan').textContent   = planText;
+        document.getElementById('confirmPlan').textContent   = planNombre;
+        document.getElementById('confirmCosto').textContent  = planPrecio;
 
         confirmModal.hidden = false;
         confirmSubmit.focus();
