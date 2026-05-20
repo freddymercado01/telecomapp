@@ -29,9 +29,6 @@
                     <h1>Contratos</h1>
                     <p>Consulta altas de servicio, estado operativo y responsables comerciales.</p>
                 </div>
-                <div class="actions">
-                    <a class="btn btn-primary" th:href="@{/contratos/nuevo}">Nuevo contrato</a>
-                </div>
             </header>
 
             <section class="card table-wrap">
@@ -67,6 +64,11 @@
                             <span class="status-chip"
                                   th:classappend="${c.estado != null and c.estado.name() == 'ACTIVO'} ? ' status-active' : ' status-inactive'"
                                   th:text="${c.estado != null ? c.estado : 'SIN_ESTADO'}"></span>
+                            <span th:if="${c.infraestructura == null or #strings.isEmpty(c.infraestructura.nodo)}"
+                                  class="status-chip"
+                                  style="background:#fff8e1;color:#b45309;border-color:#fcd34d;margin-top:4px;display:inline-flex;">
+                                Instalación pendiente
+                            </span>
                         </td>
                         <td>
                             <div class="actions">
