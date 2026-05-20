@@ -1,6 +1,7 @@
 package com.telecom.telecom_app.controller;
 
 import com.telecom.telecom_app.model.*;
+import com.telecom.telecom_app.service.ClienteService;
 import com.telecom.telecom_app.service.ContratoService;
 import com.telecom.telecom_app.service.FacturaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +19,12 @@ public class FacturaController {
 
     private final FacturaService facturaService;
     private final ContratoService contratoService;
+    private final ClienteService clienteService;
 
-    public FacturaController(FacturaService facturaService, ContratoService contratoService) {
+    public FacturaController(FacturaService facturaService, ContratoService contratoService, ClienteService clienteService) {
         this.facturaService = facturaService;
         this.contratoService = contratoService;
+        this.clienteService = clienteService;
     }
 
     @Operation(summary = "Listar todas las facturas", description = "Obtiene la lista de todas las facturas")
@@ -30,6 +33,7 @@ public class FacturaController {
     public String listar(Model model) {
         model.addAttribute("facturas", facturaService.listarTodos());
         model.addAttribute("contratos", contratoService.listarTodos());
+        model.addAttribute("clientes", clienteService.listarTodos());
         model.addAttribute("estados", EstadoFactura.values());
         return "facturas/list";
     }

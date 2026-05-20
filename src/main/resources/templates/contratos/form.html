@@ -98,6 +98,11 @@
 
                     <hr class="divider">
 
+                    <div th:if="${contrato.idContrato != null and (contrato.infraestructura == null or #strings.isEmpty(contrato.infraestructura.nodo))}"
+                         style="background:#fff8e1;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;color:#b45309;font-weight:700;margin-bottom:4px;">
+                        Los datos de instalación están pendientes de completar. Por favor diligencia la información antes de guardar.
+                    </div>
+
                     <h3 class="section-title">Infraestructura de instalacion</h3>
 
                     <div class="form-grid">
