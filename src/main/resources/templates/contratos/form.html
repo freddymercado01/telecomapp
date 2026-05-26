@@ -79,12 +79,13 @@
                     <div class="form-grid">
                         <div>
                             <label>Fecha inicio</label>
-                            <input type="date" th:field="*{fechaInicio}" required>
+                            <input type="date" id="fechaInicio" th:field="*{fechaInicio}" required>
                         </div>
 
                         <div>
-                            <label>Fecha fin</label>
-                            <input type="date" th:field="*{fechaFin}">
+                            <label>Fecha fin (permanencia mínima 6 meses)</label>
+                            <input type="date" id="fechaFin" th:field="*{fechaFin}" readonly
+                                   style="background:var(--color-surface,#f5f5f5);cursor:not-allowed;">
                         </div>
 
                         <div>
@@ -96,6 +97,11 @@
                     </div>
 
                     <hr class="divider">
+
+                    <div th:if="${contrato.idContrato != null and (contrato.infraestructura == null or #strings.isEmpty(contrato.infraestructura.nodo))}"
+                         style="background:#fff8e1;border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;color:#b45309;font-weight:700;margin-bottom:4px;">
+                        Los datos de instalación están pendientes de completar. Por favor diligencia la información antes de guardar.
+                    </div>
 
                     <h3 class="section-title">Infraestructura de instalacion</h3>
 
@@ -140,5 +146,25 @@
         </section>
     </main>
 </div>
+<script>
+(function () {
+    const fechaInicio = document.getElementById('fechaInicio');
+    const fechaFin    = document.getElementById('fechaFin');
+
+    function calcularFechaFin() {
+        if (!fechaInicio.value) return;
+        const inicio = new Date(fechaInicio.value + 'T00:00:00');
+        inicio.setMonth(inicio.getMonth() + 6);
+        fechaFin.value = inicio.toISOString().slice(0, 10);
+    }
+
+    fechaInicio.addEventListener('change', calcularFechaFin);
+
+    // Si ya hay fecha de inicio cargada (edición) y no hay fecha fin, calcularla
+    if (fechaInicio.value && !fechaFin.value) {
+        calcularFechaFin();
+    }
+})();
+</script>
 </body>
 </html>

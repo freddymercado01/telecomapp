@@ -27,43 +27,81 @@
             <header class="page-header">
                 <div class="brand">
                     <h1>Facturas</h1>
-                    <p>Genera cobros y actualiza el estado de pago de cada contrato.</p>
+                    <p>Selecciona un cliente para ver y gestionar sus facturas.</p>
                 </div>
             </header>
 
+            <!-- Selector de cliente -->
             <section class="card card-xs">
+                <h3 class="section-title">Seleccionar cliente</h3>
+                <div>
+                    <label for="clienteFilter">Cliente</label>
+                    <select id="clienteFilter">
+                        <option value="">Seleccione un cliente...</option>
+                        <option th:each="c : ${clientes}"
+                                th:value="${c.idCliente}"
+                                th:text="${c.nombre}"></option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Resumen de deuda (oculto hasta seleccionar cliente) -->
+            <section id="resumenSection" hidden>
+                <div class="grid grid-4">
+                    <div class="kpi">
+                        <div class="title">Facturas pendientes</div>
+                        <div class="value" id="kpiPendientes">0</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="title">Total adeudado</div>
+                        <div class="value" id="kpiDeuda" style="color:#b42318;">$0,00</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="title">Facturas pagadas</div>
+                        <div class="value" id="kpiPagadas" style="color:#0f7b42;">0</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generar factura (oculto hasta seleccionar cliente) -->
+            <section id="generarSection" class="card card-xs" hidden>
                 <h3 class="section-title">Generar factura</h3>
                 <form th:action="@{/facturas/generar}" method="post" class="form-stack">
                     <div>
-                        <label for="contratoId">Contrato</label>
+                        <label for="contratoId">Contrato activo del cliente</label>
                         <select id="contratoId" name="contratoId" required>
                             <option value="" disabled selected>Seleccione un contrato</option>
                             <option th:each="c : ${contratos}"
                                     th:value="${c.idContrato}"
-                                    th:text="${'Contrato ' + c.idContrato + ' - ' + (c.cliente != null ? c.cliente.nombre : 'Sin cliente') + ' - ' + (c.plan != null ? c.plan.nombre : 'Sin plan')}">
+                                    th:data-cliente-id="${c.cliente != null ? c.cliente.idCliente : ''}"
+                                    th:text="${'Contrato #' + c.idContrato + ' — ' + (c.plan != null ? c.plan.nombre : 'Sin plan')}">
                             </option>
                         </select>
+                        <p id="sinContratosMsg" hidden
+                           style="color:#b42318;font-size:0.85rem;margin-top:6px;">
+                            Este cliente no tiene contratos registrados.
+                        </p>
                     </div>
-
                     <div class="actions">
-                        <button type="submit" class="btn-primary">Generar</button>
+                        <button type="submit" class="btn-primary">Generar factura</button>
                     </div>
                 </form>
             </section>
 
-            <section class="card table-wrap">
+            <!-- Tabla de facturas (oculta hasta seleccionar cliente) -->
+            <section id="facturasSection" class="card table-wrap" hidden>
                 <div class="table-toolbar">
-                    <div class="table-meta" th:text="${'Total facturas: ' + #lists.size(facturas)}"></div>
-                    <div class="table-search">
-                        <input type="text" placeholder="Buscar por cliente, contrato o estado..." data-table-search="facturas-table">
-                    </div>
+                    <div class="table-meta" id="totalFacturas">Facturas del cliente: 0</div>
+                </div>
+                <div id="sinFacturasMsg" hidden
+                     style="text-align:center;color:#5b6b7a;padding:20px 8px;">
+                    Este cliente aún no tiene facturas generadas.
                 </div>
                 <table id="facturas-table" class="app-table">
                     <thead>
                     <tr>
                         <th>ID</th>
                         <th>Contrato</th>
-                        <th>Cliente</th>
                         <th>Fecha emision</th>
                         <th>Total</th>
                         <th>Estado</th>
@@ -72,12 +110,14 @@
                     </thead>
                     <tbody>
                     <tr th:if="${#lists.isEmpty(facturas)}" class="empty-row">
-                        <td class="empty-row" colspan="7">No hay facturas registradas aun.</td>
+                        <td class="empty-row" colspan="6">No hay facturas registradas aun.</td>
                     </tr>
-                    <tr th:each="f : ${facturas}" data-filter-row="true">
+                    <tr th:each="f : ${facturas}"
+                        th:data-cliente-id="${f.contrato != null and f.contrato.cliente != null ? f.contrato.cliente.idCliente : ''}"
+                        th:data-total="${f.total != null ? f.total : 0}"
+                        th:data-estado="${f.estado != null ? f.estado.name() : ''}">
                         <td th:text="${f.idFactura}"></td>
-                        <td th:text="${f.contrato != null ? f.contrato.idContrato : 'Sin contrato'}"></td>
-                        <td th:text="${f.contrato != null and f.contrato.cliente != null ? f.contrato.cliente.nombre : 'Sin cliente'}"></td>
+                        <td th:text="${f.contrato != null ? '#' + f.contrato.idContrato : 'Sin contrato'}"></td>
                         <td th:text="${f.fechaEmision != null ? f.fechaEmision : 'Sin fecha'}"></td>
                         <td th:text="${f.total != null ? #numbers.formatDecimal(f.total, 1, 'POINT', 2, 'COMMA') : '0,00'}"></td>
                         <td>
@@ -97,15 +137,11 @@
                                     </select>
                                     <button type="submit" class="btn-secondary">Actualizar</button>
                                 </form>
-
                                 <form th:action="@{'/facturas/' + ${f.idFactura} + '/eliminar'}" method="post" data-confirm="¿Eliminar esta factura? Esta acción no se puede deshacer.">
                                     <button type="submit" class="btn-danger">Eliminar</button>
                                 </form>
                             </div>
                         </td>
-                    </tr>
-                    <tr class="no-results-row">
-                        <td class="empty-row" colspan="7">No hay resultados para la búsqueda actual.</td>
                     </tr>
                     </tbody>
                 </table>
@@ -113,5 +149,70 @@
         </section>
     </main>
 </div>
+
+<script>
+(function () {
+    const clienteFilter   = document.getElementById('clienteFilter');
+    const resumenSection  = document.getElementById('resumenSection');
+    const generarSection  = document.getElementById('generarSection');
+    const facturasSection = document.getElementById('facturasSection');
+    const contratoSelect  = document.getElementById('contratoId');
+    const totalFacturas   = document.getElementById('totalFacturas');
+    const sinContratosMsg = document.getElementById('sinContratosMsg');
+    const sinFacturasMsg  = document.getElementById('sinFacturasMsg');
+    const facturaRows     = document.querySelectorAll('#facturas-table tbody tr[data-cliente-id]');
+    const contratoOptions = contratoSelect.querySelectorAll('option[data-cliente-id]');
+
+    const kpiPendientes = document.getElementById('kpiPendientes');
+    const kpiDeuda      = document.getElementById('kpiDeuda');
+    const kpiPagadas    = document.getElementById('kpiPagadas');
+
+    clienteFilter.addEventListener('change', () => {
+        const clienteId = clienteFilter.value;
+
+        if (!clienteId) {
+            resumenSection.hidden = true;
+            generarSection.hidden = true;
+            facturasSection.hidden = true;
+            return;
+        }
+
+        resumenSection.hidden = false;
+        generarSection.hidden = false;
+        facturasSection.hidden = false;
+
+        // Filtrar filas y calcular KPIs
+        let count = 0, pendientes = 0, pagadas = 0, deuda = 0;
+        facturaRows.forEach(row => {
+            const match = row.dataset.clienteId === clienteId;
+            row.hidden = !match;
+            if (match) {
+                count++;
+                const estado = row.dataset.estado;
+                const total  = parseFloat(row.dataset.total) || 0;
+                if (estado === 'PENDIENTE') { pendientes++; deuda += total; }
+                if (estado === 'PAGADA')    { pagadas++; }
+            }
+        });
+
+        totalFacturas.textContent    = 'Facturas del cliente: ' + count;
+        sinFacturasMsg.hidden        = count > 0;
+        kpiPendientes.textContent    = pendientes;
+        kpiDeuda.textContent         = '$' + deuda.toLocaleString('es-CO', { minimumFractionDigits: 2 });
+        kpiPagadas.textContent       = pagadas;
+
+        // Filtrar contratos
+        let contratoCount = 0;
+        contratoOptions.forEach(opt => {
+            const match = opt.dataset.clienteId === clienteId;
+            opt.hidden = !match;
+            if (match) contratoCount++;
+        });
+
+        contratoSelect.value      = '';
+        sinContratosMsg.hidden    = contratoCount > 0;
+    });
+})();
+</script>
 </body>
 </html>
