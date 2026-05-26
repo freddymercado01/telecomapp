@@ -1,4 +1,5 @@
 package com.telecom.telecom_app.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -15,6 +16,7 @@ public class Factura {
     private EstadoFactura estado = EstadoFactura.PENDIENTE;
 
     @ManyToOne(optional = false)
+    @JsonIgnoreProperties("facturas")
     private Contrato contrato;
 
     public Long getIdFactura() { return idFactura; }

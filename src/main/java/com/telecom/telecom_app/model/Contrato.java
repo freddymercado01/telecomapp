@@ -1,4 +1,5 @@
 package com.telecom.telecom_app.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class Contrato {
     private Infraestructura infraestructura;
 
     @OneToMany(mappedBy = "contrato", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("contrato")
     private List<Factura> facturas = new ArrayList<>();
 
     public String getMotivoInactivacion() { return motivoInactivacion; }
